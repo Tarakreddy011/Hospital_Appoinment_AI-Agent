@@ -1,33 +1,31 @@
 import os
-import mysql.connector
 from groq import Groq
 
-# Initialize Groq client
-client = Groq(api_key="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")
+try:
+    from sqlconnections import get_patient_last_visit, insert_patient_record
+except ImportError:
+    from Hospital.sqlconnections import get_patient_last_visit, insert_patient_record
 
-def get_db_connection():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="Tarak@2005",
-        database="hospital_db"
-    )
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "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")
+client = Groq(api_key=GROQ_API_KEY)
 
-def run_intake_agent(name: str, phone: str, current_concern: str):
+
+def run_intake_agent(name: str, phone: str, current_concern: str) -> str:
     """
-    Intake Agent: Combines MySQL memory check (returning patient history) 
+    Intake Agent: Combines database memory check (returning patient history) 
     with Groq LLM reasoning to generate a structured patient intake record.
     """
-    db = get_db_connection()
-    cursor = db.cursor(dictionary=True)
+    # 1. Memory Check: Query database for prior visits
+    previous_visit = get_patient_last_visit(phone)
     
-    # 1. Memory Check: Query MySQL for prior visits
-    cursor.execute("SELECT * FROM patient_records WHERE phone = %s ORDER BY visit_date DESC LIMIT 1", (phone,))
-    previous_visit = cursor.fetchone()
-    
-    history_context = "No previous records found. New patient."
     if previous_visit:
-        history_context = f"Returning Patient! Last visit date: {previous_visit['visit_date']}, Routed Department: {previous_visit['routed_department']}, Prior Concern: {previous_visit['last_concern']}"
+        history_context = (
+            f"Returning Patient! Last visit: {previous_visit.get('visit_date', 'N/A')}, "
+            f"Routed Department: {previous_visit.get('routed_department', 'N/A')}, "
+            f"Prior Concern: {previous_visit.get('last_concern', 'N/A')}"
+        )
+    else:
+        history_context = "No previous records found. New patient."
     
     # 2. LLM Reasoning/Agent Prompt
     prompt = f"""
@@ -42,29 +40,38 @@ def run_intake_agent(name: str, phone: str, current_concern: str):
     - PATIENT_NAME: 
     - STATUS: (New or Returning)
     - MEMORY_SUMMARY: (Briefly mention prior visit if returning)
-    - STRUCTURED_CONCERN: (A clean, professional phrasing of the current concern for the triage doctor)
+    - STRUCTURED_CONCERN: (A clean, professional phrasing of the current concern for the triage router)
     """
     
-    completion = client.chat.completions.create(
-        model="openai/gpt-oss-120b", 
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.0
-    )
+    try:
+        completion = client.chat.completions.create(
+            model="openai/gpt-oss-120b", 
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0
+        )
+        agent_output = completion.choices[0].message.content.strip()
+    except Exception:
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile", 
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0
+        )
+        agent_output = completion.choices[0].message.content.strip()
     
-    agent_output = completion.choices[0].message.content
-    
-    # 3. Save this new visit to MySQL
-    insert_query = """
-        INSERT INTO patient_records (name, phone, last_concern, routed_department) 
-        VALUES (%s, %s, %s, %s)
-    """
-    cursor.execute(insert_query, (name, phone, current_concern, "Pending Triage"))
-    db.commit()
-    
-    cursor.close()
-    db.close()
+    # 3. Save this new visit to database
+    insert_patient_record(name, phone, current_concern, "Pending Triage")
     
     return agent_output
+
+
+def extract_structured_concern(intake_output: str, fallback_concern: str) -> str:
+    for line in intake_output.splitlines():
+        if "STRUCTURED_CONCERN:" in line:
+            clean = line.split("STRUCTURED_CONCERN:", 1)[1].strip()
+            if clean:
+                return clean
+    return fallback_concern
+
 
 if __name__ == "__main__":
     print("--- Testing Intake Agent ---")

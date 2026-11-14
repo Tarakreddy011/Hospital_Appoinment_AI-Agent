@@ -1,43 +1,58 @@
 import os
 from groq import Groq
 
-# Directly pass your API key as a string to avoid environment issues
-client = Groq(api_key="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")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "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")
+client = Groq(api_key=GROQ_API_KEY)
 
 
-def check_safety(patient_concern: str):
+def check_safety(patient_concern: str) -> str:
     """
     Analyzes the patient's described concern for emergency red flags.
     Acts as the mandatory Safety Gate.
     """
-    
-    # 1. Define the system/user prompt instructions restricting the LLM to safety evaluation only
     prompt = f"""
     You are a hospital Safety Gate Agent. Your sole job is to analyze this patient concern for emergency red flags 
-    (such as chest pain, severe bleeding, breathing difficulty, stroke signs, or sudden trauma):
+    (such as chest pain, severe bleeding, breathing difficulty, stroke signs, loss of consciousness, or sudden trauma):
     
     "{patient_concern}"
     
     Rules:
     - If it sounds urgent or life-threatening, set URGENT to true and provide an immediate in-person emergency advisory.
     - If it is routine/non-urgent, set URGENT to false and set ADVISORY to None.
-    - If incase emergency give helpline numbers very short
+    - In case of emergency provide short helpline numbers (112 or 108).
     - Never diagnose any disease.
-    - Incase of Emergency Use Indian Emergency services such as 112 or 108.
     
     Output strictly in this format:
     URGENT: [true/false]
     ADVISORY: [Your advice or "None"]
     """
     
-    completion = client.chat.completions.create(
-        model="openai/gpt-oss-120b",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.0
-    )
-    
-    # Return the exact text content
-    return completion.choices[0].message.content
+    try:
+        completion = client.chat.completions.create(
+            model="openai/gpt-oss-120b",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0
+        )
+        return completion.choices[0].message.content.strip()
+    except Exception:
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0
+        )
+        return completion.choices[0].message.content.strip()
+
+
+def is_emergency(safety_response: str) -> bool:
+    """Helper to detect if safety check flagged an emergency."""
+    if not safety_response:
+        return False
+    lower = safety_response.lower()
+    for line in lower.splitlines():
+        if "urgent:" in line:
+            return "true" in line
+    return "urgent: true" in lower or ("urgent" in lower and "true" in lower)
+
 
 if __name__ == "__main__":
     print("--- Test 1 (Emergency) ---")
