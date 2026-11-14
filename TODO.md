@@ -1,53 +1,29 @@
-# **hospital-router**
+# Hospital Patient Routing AI Agent — Project Tracker
 
-**│**
+## Project Overview
+Multi-Agent Hospital Outpatient Routing and Triage System built with Groq LLMs, dual MySQL/SQLite database memory, and a clean, responsive web frontend.
 
-**├── main.py            # FastAPI server entry point**
-
-**├── agents/**
-
-**│   ├── safety.py      # Safety Gate Agent**
-
-**│   ├── intake.py      # Intake \& Memory Check Agent**
-
-**│   ├── triage.py      # Triage Router Agent**
-
-**│   ├── info.py        # Information Agent (RAG)**
-
-**│   └── appointment.py # Appointment Agent**
-
-**└── templates/**
-
-&#x20;   **└── index.html     # Basic frontend UI**
-
-
-
-
-
-**--**
-
-**----------------------------------------------------------------------------------------------------------**
-
-* **Safety Gate: Evaluates inputs first for emergency red flags, intercepting urgent cases with an immediate in-person care advisory.**
-* **gsk\_tpTMZPPk2k0zDf8pHmMUWGdyb3FYsS3B9zZRRV5xofh4RHZDv3uA|gsk\_tpTMZPPk2k0zDf8pHmMUWGdyb3FYsS3B9zZRRV5xofh4RHZDv3uA**
-* 
-* **Intake \& Memory Check: Captures basic details and queries a shared memory store to recall prior patient visits (group-of-three requirement).**
-* 
-* **Triage Router: Maps the described concern to a clinical department (e.g., Orthopaedics, ENT) without diagnosing.**
-* 
-* **Information Agent: Uses RAG over department documents to fetch instructions and required items.**
-* 
-* **Appointment Agent: Proposes available time slots for the routed department.**
-
-**--**
-
-**--------------------------------------------------------------------------------------------------------**
-
-**--**
-
-
-
-
-
-
-
+### Architecture & Agent Pipeline Status
+- [x] **Step 1: Safety Gate Agent (`Hospital/safety_agent.py`)**
+  - Evaluates inputs first for emergency red flags (chest pain, trauma, stroke signs).
+  - Intercepts urgent cases with immediate 112/108 advisory; halts outpatient routing.
+- [x] **Step 2: Intake & Memory Agent (`Hospital/intake_agent.py`)**
+  - Recalls prior visits from database memory by patient phone number.
+  - Distinguishes New vs. Returning patients and formats structured intake ticket.
+- [x] **Step 3: Triage Router Agent (`Hospital/triage_agent.py`)**
+  - Maps described symptoms to clinical department (Orthopaedics, ENT, Cardiology, etc.).
+  - Strictly prohibits clinical disease diagnosis.
+- [x] **Step 4: Information Agent (RAG) (`Hospital/info_agent.py`)**
+  - Uses RAG over hospital knowledge base documents.
+  - Generates intake instructions and what to bring (fasting, previous scans, IDs).
+- [x] **Step 5: Appointment Agent (`Hospital/appointment_agent.py`)**
+  - Assigns available doctor slot and room number.
+  - Generates digital confirmation slip and updates database in real time.
+- [x] **Unified Database Layer (`Hospital/sqlconnections.py`)**
+  - Dual-mode persistence: MySQL with resilient SQLite fallback (`hospital.db`).
+- [x] **Web Frontend (`templates/index.html` & `server.py`)**
+  - Modern, responsive HTML/CSS/JS frontend without Streamlit.
+  - Step-by-step visual cards for all 5 agents.
+  - Emergency red banner and advisory intercept.
+  - One-click viva presentation presets (Emergency, Ortho, Returning Patient).
+  - Live database viewer table.
