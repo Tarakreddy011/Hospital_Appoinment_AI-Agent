@@ -9,50 +9,81 @@ except ImportError:
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "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")
 client = Groq(api_key=GROQ_API_KEY)
 
-# Mock Hospital Schedule (Simulating available slots per department)
-DOCTOR_SLOTS = {
-    "Orthopaedics": "Dr. Mehta - Tomorrow at 10:30 AM (Room 204)",
-    "General Medicine": "Dr. Verma - Today at 4:00 PM (Room 102)",
-    "ENT": "Dr. Nair - Tomorrow at 11:15 AM (Room 305)",
-    "Cardiology": "Dr. Reddy - Tomorrow at 9:30 AM (Room 401)",
-    "Dermatology": "Dr. Priya Patel - Tomorrow at 2:00 PM (Room 108)",
-    "Ophthalmology": "Dr. Ananya Sen - Today at 4:30 PM (Room 210)",
-    "Neurology": "Dr. Vikram Joshi - Tomorrow at 11:45 AM (Room 312)",
-    "Gastroenterology": "Dr. K. S. Rao - Tomorrow at 1:30 PM (Room 205)"
+# Department Available Doctor Slots
+DEPARTMENT_SLOTS = {
+    "Orthopaedics": [
+        {"doctor": "Dr. Mehta", "time": "Tomorrow at 10:30 AM", "room": "Room 204", "type": "Regular Joint Consultation"},
+        {"doctor": "Dr. S. Kapoor", "time": "Tomorrow at 02:30 PM", "room": "Room 206", "type": "Joint & Spine Clinic"},
+        {"doctor": "Dr. A. Verma", "time": "Friday at 11:00 AM", "room": "Room 208", "type": "Musculoskeletal OPD"}
+    ],
+    "General Medicine": [
+        {"doctor": "Dr. Verma", "time": "Today at 04:00 PM", "room": "Room 102", "type": "General Outpatient Clinic"},
+        {"doctor": "Dr. R. Gupta", "time": "Tomorrow at 09:30 AM", "room": "Room 104", "type": "Internal Medicine"},
+        {"doctor": "Dr. M. Iyer", "time": "Tomorrow at 05:00 PM", "room": "Room 105", "type": "Evening Consultation"}
+    ],
+    "ENT": [
+        {"doctor": "Dr. Nair", "time": "Tomorrow at 11:15 AM", "room": "Room 305", "type": "Ear, Nose & Throat OPD"},
+        {"doctor": "Dr. P. Deshmukh", "time": "Tomorrow at 03:30 PM", "room": "Room 307", "type": "Sinus & Allergy Clinic"}
+    ],
+    "Cardiology": [
+        {"doctor": "Dr. Reddy", "time": "Tomorrow at 09:30 AM", "room": "Room 401", "type": "Cardiology Consultation"},
+        {"doctor": "Dr. B. Sengupta", "time": "Tomorrow at 01:00 PM", "room": "Room 403", "type": "Preventive Heart Clinic"}
+    ],
+    "Dermatology": [
+        {"doctor": "Dr. Priya Patel", "time": "Tomorrow at 02:00 PM", "room": "Room 108", "type": "Clinical Dermatology"},
+        {"doctor": "Dr. K. Saxena", "time": "Tomorrow at 04:30 PM", "room": "Room 110", "type": "Skin & Hair OPD"}
+    ],
+    "Ophthalmology": [
+        {"doctor": "Dr. Ananya Sen", "time": "Today at 04:30 PM", "room": "Room 210", "type": "Comprehensive Eye Clinic"},
+        {"doctor": "Dr. H. Joshi", "time": "Tomorrow at 10:00 AM", "room": "Room 212", "type": "Vision Care"}
+    ],
+    "Neurology": [
+        {"doctor": "Dr. Vikram Joshi", "time": "Tomorrow at 11:45 AM", "room": "Room 312", "type": "Neurological Evaluation"},
+        {"doctor": "Dr. N. Roy", "time": "Tomorrow at 03:00 PM", "room": "Room 314", "type": "Headache & Balance Clinic"}
+    ],
+    "Gastroenterology": [
+        {"doctor": "Dr. K. S. Rao", "time": "Tomorrow at 01:30 PM", "room": "Room 205", "type": "Digestive Health Clinic"},
+        {"doctor": "Dr. T. Banerjee", "time": "Tomorrow at 04:00 PM", "room": "Room 207", "type": "GI & Liver OPD"}
+    ]
 }
 
 
-def get_slot_for_department(department: str) -> str:
-    for key, slot in DOCTOR_SLOTS.items():
+def get_slots_for_department(department: str) -> list:
+    """Returns available doctor slots for the routed department."""
+    for key, slots in DEPARTMENT_SLOTS.items():
         if key.lower() in department.lower():
-            return slot
-    return "Duty Medical Officer - Today at 5:00 PM (General OPD Room 101)"
+            return slots
+    return [
+        {"doctor": "Duty Medical Officer", "time": "Today at 05:00 PM", "room": "Room 101", "type": "General Outpatient"},
+        {"doctor": "Senior Consultant", "time": "Tomorrow at 10:00 AM", "room": "Room 103", "type": "OPD Walk-In"}
+    ]
 
 
-def book_appointment(phone: str, department: str) -> str:
+def book_appointment(phone: str, department: str, chosen_slot: dict = None) -> str:
     """
-    Appointment Agent: Checks available department slots, generates a 
-    confirmation slip via Groq, and updates the database record.
+    Appointment Agent: Books an appointment slot, updates the database,
+    and returns a clean confirmation slip via Groq.
     """
-    # 1. Look up available slot for the routed department
-    assigned_slot = get_slot_for_department(department)
+    slots = get_slots_for_department(department)
+    slot_info = chosen_slot or slots[0]
+    assigned_text = f"{slot_info['doctor']} - {slot_info['time']} ({slot_info['room']})"
     
-    # 2. Update the patient's latest visit record in database
-    slot_detail = f"{department} ({assigned_slot})"
-    update_patient_department(phone, slot_detail)
+    # Update latest patient visit in database
+    update_patient_department(phone, f"{department} | {assigned_text}")
     
-    # 3. Use Groq LLM to generate a clean confirmation slip
     prompt = f"""
-    You are a Hospital Appointment Booking Agent. Generate a brief, polite appointment confirmation slip using these exact details:
+    You are a Hospital Appointment Booking Agent. Generate a brief, polite appointment confirmation slip using these details:
     - Department: {department}
-    - Assigned Slot & Doctor: {assigned_slot}
-    - Status: Confirmed & Logged in Hospital Database
+    - Doctor: {slot_info['doctor']}
+    - Time Slot: {slot_info['time']}
+    - Room: {slot_info['room']}
+    - Clinic Type: {slot_info.get('type', 'Consultation')}
     
-    Format clearly with:
-    - Confirmation Code (e.g. APPT-12345)
-    - Department & Doctor
-    - Date, Time & Room
-    - Status: Confirmed
+    Format clearly:
+    - CONFIRMATION ID: (e.g. APPT-12345)
+    - DOCTOR & DEPARTMENT:
+    - DATE, TIME & ROOM:
+    - STATUS: Confirmed & Synchronized with Hospital Registry
     """
     
     try:

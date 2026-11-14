@@ -1,7 +1,6 @@
 import os
 import sys
 
-# Windows UTF-8 console output safe-guard
 if sys.platform == "win32":
     try:
         if hasattr(sys.stdout, "reconfigure"):
@@ -19,14 +18,24 @@ from safety_agent import check_safety, is_emergency
 from intake_agent import run_intake_agent, extract_structured_concern
 from triage_agent import route_patient, extract_department
 from info_agent import get_department_info
-from appointment_agent import book_appointment
+from appointment_agent import book_appointment, get_slots_for_department
+from sqlconnections import get_patient_last_visit
 
 
-def run_hospital_system(name: str, phone: str, patient_concern: str) -> dict:
+def extract_rationale(triage_text: str) -> str:
+    for line in triage_text.splitlines():
+        if "RATIONALE:" in line:
+            clean = line.split("RATIONALE:", 1)[1].strip()
+            clean = clean.replace("[", "").replace("]", "").strip()
+            if clean:
+                return clean
+    return triage_text
+
+
+def run_hospital_system(name: str, phone: str, patient_concern: str, chosen_slot: dict = None) -> dict:
     """
-    Executes the complete 5-agent hospital routing and scheduling pipeline.
-    
-    Returns structured data for the frontend and execution logs.
+    Executes the 5-agent hospital routing and scheduling pipeline.
+    Returns focused data structure for clean UI presentation.
     """
     logs = []
     
@@ -38,7 +47,7 @@ def run_hospital_system(name: str, phone: str, patient_concern: str) -> dict:
         logs.append(msg)
         
     log("==================================================")
-    log(f"🏥 STARTING PATIENT ROUTING PIPELINE FOR: {name}")
+    log(f"🏥 PATIENT ROUTING PIPELINE FOR: {name}")
     log("==================================================\n")
     
     # ----------------------------------------------------
@@ -51,18 +60,12 @@ def run_hospital_system(name: str, phone: str, patient_concern: str) -> dict:
     urgent = is_emergency(safety_response)
     
     if urgent:
-        log("\n🚨 EMERGENCY DETECTED! Halting standard routing. Immediate care advised (Dial 112/108)!")
+        log("\n🚨 CRITICAL EMERGENCY DETECTED! Halting standard routing.")
         return {
             "success": False,
             "is_urgent": True,
-            "step_results": {
-                "safety": safety_response,
-                "intake": None,
-                "triage": None,
-                "department": None,
-                "info": None,
-                "appointment": None
-            },
+            "emergency_advice": safety_response,
+            "helpline": "112 / 108",
             "logs": "\n".join(logs)
         }
 
@@ -71,6 +74,10 @@ def run_hospital_system(name: str, phone: str, patient_concern: str) -> dict:
     # ----------------------------------------------------
     # STEP 2: INTAKE AGENT (with Database Memory Check)
     # ----------------------------------------------------
+    # Query prior memory before inserting current visit
+    previous_visit = get_patient_last_visit(phone)
+    is_returning = bool(previous_visit)
+    
     log("[2/5] Running Intake Agent & Database Memory Check...")
     intake_ticket = run_intake_agent(name, phone, patient_concern)
     log(intake_ticket)
@@ -86,7 +93,8 @@ def run_hospital_system(name: str, phone: str, patient_concern: str) -> dict:
     log(triage_output)
     
     department = extract_department(triage_output, fallback_department="General Medicine")
-    log(f"\n -> Routed successfully to: {department}\n")
+    rationale = extract_rationale(triage_output)
+    log(f"\n -> Routed to: {department} ({rationale})\n")
     
     # ----------------------------------------------------
     # STEP 4: INFORMATION AGENT (RAG)
@@ -97,34 +105,44 @@ def run_hospital_system(name: str, phone: str, patient_concern: str) -> dict:
     log("\n")
     
     # ----------------------------------------------------
-    # STEP 5: APPOINTMENT AGENT
+    # STEP 5: APPOINTMENT AGENT & AVAILABLE SLOTS
     # ----------------------------------------------------
-    log(f"[5/5] Running Appointment Agent & Updating Database...")
-    appointment_output = book_appointment(phone, department)
+    log(f"[5/5] Running Appointment Agent...")
+    available_slots = get_slots_for_department(department)
+    selected_slot = chosen_slot or available_slots[0]
+    
+    appointment_output = book_appointment(phone, department, selected_slot)
     log(appointment_output)
     
     log("\n==================================================")
-    log("✅ PATIENT ROUTING & BOOKING COMPLETE")
+    log("✅ ROUTING & APPOINTMENT COMPLETE")
     log("==================================================")
     
     return {
         "success": True,
         "is_urgent": False,
-        "step_results": {
-            "safety": safety_response,
-            "intake": intake_ticket,
-            "triage": triage_output,
-            "department": department,
-            "info": info_output,
-            "appointment": appointment_output
-        },
+        "patient_name": name,
+        "phone": phone,
+        "is_returning": is_returning,
+        "previous_visit": {
+            "visit_date": str(previous_visit.get("visit_date", "N/A")) if previous_visit else "",
+            "last_concern": previous_visit.get("last_concern", "") if previous_visit else "",
+            "last_department": previous_visit.get("routed_department", "") if previous_visit else ""
+        } if is_returning else None,
+        "department": department,
+        "rationale": rationale,
+        "instructions": info_output,
+        "booking_options": available_slots,
+        "assigned_booking": appointment_output,
+        "selected_slot": selected_slot,
         "logs": "\n".join(logs)
     }
 
 
 if __name__ == "__main__":
-    result = run_hospital_system(
+    res = run_hospital_system(
         name="Tarak", 
         phone="6303641937", 
-        patient_concern="When i stand suddenly i feel mind block type also every morning very weak me also not able to sleep at night"
+        patient_concern="Sharp pain in right knee when climbing stairs and swelling"
     )
+    print(res)
