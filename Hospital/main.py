@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 
 if sys.platform == "win32":
     try:
@@ -17,7 +18,7 @@ if CURRENT_DIR not in sys.path:
 from safety_agent import check_safety, is_emergency
 from intake_agent import run_intake_agent, extract_structured_concern
 from triage_agent import route_patient, extract_department
-from info_agent import get_department_info
+from info_agent import get_department_info, get_structured_dept_info
 from appointment_agent import book_appointment, get_slots_for_department
 from sqlconnections import get_patient_last_visit
 
@@ -30,6 +31,30 @@ def extract_rationale(triage_text: str) -> str:
             if clean:
                 return clean
     return triage_text
+
+
+def clean_emergency_advisory(safety_text: str) -> str:
+    """Strips raw backend tags from emergency advisory for patient-facing view."""
+    if not safety_text:
+        return "Immediate emergency medical care required. Call emergency services."
+    lines = []
+    for line in safety_text.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        # Skip raw URGENT tag
+        if re.match(r"^URGENT:\s*(true|false)", line, re.IGNORECASE):
+            continue
+        # Strip ADVISORY tag
+        if re.match(r"^ADVISORY:\s*", line, re.IGNORECASE):
+            cleaned = re.sub(r"^ADVISORY:\s*", "", line, flags=re.IGNORECASE).strip()
+            if cleaned and cleaned.lower() != "none":
+                lines.append(cleaned)
+            continue
+        lines.append(line)
+    
+    result = " ".join(lines).strip()
+    return result or "Please call emergency services (112 or 108) or report to the nearest hospital emergency room immediately."
 
 
 def run_hospital_system(name: str, phone: str, patient_concern: str, chosen_slot: dict = None) -> dict:
@@ -60,11 +85,13 @@ def run_hospital_system(name: str, phone: str, patient_concern: str, chosen_slot
     urgent = is_emergency(safety_response)
     
     if urgent:
+        clean_advisory = clean_emergency_advisory(safety_response)
         log("\n🚨 CRITICAL EMERGENCY DETECTED! Halting standard routing.")
         return {
             "success": False,
             "is_urgent": True,
-            "emergency_advice": safety_response,
+            "raw_safety": safety_response,
+            "emergency_advice": clean_advisory,
             "helpline": "112 / 108",
             "logs": "\n".join(logs)
         }
@@ -74,7 +101,6 @@ def run_hospital_system(name: str, phone: str, patient_concern: str, chosen_slot
     # ----------------------------------------------------
     # STEP 2: INTAKE AGENT (with Database Memory Check)
     # ----------------------------------------------------
-    # Query prior memory before inserting current visit
     previous_visit = get_patient_last_visit(phone)
     is_returning = bool(previous_visit)
     
@@ -101,6 +127,7 @@ def run_hospital_system(name: str, phone: str, patient_concern: str, chosen_slot
     # ----------------------------------------------------
     log(f"[4/5] Running Information Agent (RAG for {department})...")
     info_output = get_department_info(department)
+    structured_prep = get_structured_dept_info(department)
     log(info_output)
     log("\n")
     
@@ -132,6 +159,7 @@ def run_hospital_system(name: str, phone: str, patient_concern: str, chosen_slot
         "department": department,
         "rationale": rationale,
         "instructions": info_output,
+        "structured_instructions": structured_prep,
         "booking_options": available_slots,
         "assigned_booking": appointment_output,
         "selected_slot": selected_slot,

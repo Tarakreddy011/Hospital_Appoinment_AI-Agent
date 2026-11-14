@@ -23,7 +23,7 @@
       --danger-light: #fee2e2;
       --success: #16a34a;
       --success-light: #dcfce7;
-      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
       --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
       --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
     }
@@ -127,7 +127,7 @@
     /* Main Container */
     main {
       flex: 1;
-      max-width: 1180px;
+      max-width: 1200px;
       margin: 2rem auto;
       padding: 0 1.5rem;
       width: 100%;
@@ -157,7 +157,7 @@
       align-items: start;
     }
 
-    @media (max-width: 920px) {
+    @media (max-width: 940px) {
       .layout-grid {
         grid-template-columns: 1fr;
       }
@@ -224,31 +224,37 @@
       min-height: 120px;
     }
 
-    /* Returning Patient Banner */
+    /* Clean Returning Patient Banner */
     .returning-patient-box {
       display: none;
       background: #f0f9ff;
       border: 1.5px solid #bae6fd;
-      border-radius: 10px;
-      padding: 0.9rem 1rem;
-      margin-bottom: 1.25rem;
+      border-radius: 12px;
+      padding: 1rem 1.15rem;
+      margin-bottom: 1.35rem;
       animation: fadeIn 0.3s ease;
     }
 
     .returning-patient-box .title {
       font-weight: 700;
       color: #0369a1;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      margin-bottom: 0.25rem;
+      gap: 0.45rem;
+      margin-bottom: 0.45rem;
     }
 
-    .returning-patient-box .desc {
+    .returning-details-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
       font-size: 0.82rem;
       color: #0c4a6e;
-      line-height: 1.45;
+      background: #ffffff;
+      border: 1px solid #e0f2fe;
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
     }
 
     .submit-button {
@@ -343,7 +349,7 @@
 
     /* Doctor Slot Selection */
     .section-title {
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       font-weight: 700;
       color: #1e293b;
       margin-bottom: 0.75rem;
@@ -399,13 +405,13 @@
       margin-top: 0.2rem;
     }
 
-    /* DIGITAL APPOINTMENT PASS (FORMATTED CLEAN MESSAGE) */
+    /* DIGITAL APPOINTMENT PASS */
     .appointment-pass-card {
       background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
       border: 1.5px solid #86efac;
       border-radius: 14px;
       padding: 1.35rem 1.5rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.75rem;
       box-shadow: 0 4px 12px rgba(22, 163, 74, 0.08);
       position: relative;
     }
@@ -497,62 +503,137 @@
       gap: 0.45rem;
     }
 
-    /* FORMATTED INSTRUCTIONS & WHAT TO BRING (CLEAN MESSAGE) */
-    .prep-container {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.25rem;
-    }
-
-    .prep-section {
+    /* DOWN DETAILS: BEAUTIFUL DUAL-CARD MEDICAL UI */
+    .prep-dual-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      margin-top: 0.5rem;
       margin-bottom: 1.25rem;
     }
 
-    .prep-section:last-child {
-      margin-bottom: 0;
+    @media (max-width: 760px) {
+      .prep-dual-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
-    .prep-header {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: #0f172a;
+    .prep-box-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      transition: all 0.2s;
+    }
+
+    .prep-box-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+
+    .card-guidelines {
+      border-top: 4px solid var(--primary);
+      background: linear-gradient(180deg, #f8fafc 0%, #ffffff 40%);
+    }
+
+    .card-bring {
+      border-top: 4px solid var(--teal);
+      background: linear-gradient(180deg, #f0fdfa 0%, #ffffff 40%);
+    }
+
+    .prep-box-header {
       display: flex;
       align-items: center;
-      gap: 0.45rem;
-      margin-bottom: 0.6rem;
-      padding-bottom: 0.35rem;
+      gap: 0.65rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
       border-bottom: 1px solid #f1f5f9;
     }
 
-    .prep-bullet-item {
+    .prep-icon-wrapper {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+    }
+
+    .icon-blue { background: #e0f2fe; color: #0284c7; }
+    .icon-teal { background: #ccfbf1; color: #0d9488; }
+
+    .prep-box-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .prep-box-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .prep-item-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      flex: 1;
+    }
+
+    .prep-list-item {
       display: flex;
       align-items: flex-start;
       gap: 0.55rem;
       font-size: 0.85rem;
       color: #334155;
-      margin-bottom: 0.45rem;
       line-height: 1.5;
     }
 
-    .bullet-icon {
-      color: var(--primary);
+    .check-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      font-size: 0.7rem;
       font-weight: 800;
-      font-size: 0.85rem;
-      line-height: 1.3;
+      flex-shrink: 0;
+      margin-top: 2px;
     }
 
-    .prep-closing-msg {
+    .check-blue { background: #e0f2fe; color: #0284c7; }
+    .check-teal { background: #ccfbf1; color: #0d9488; }
+
+    /* OPD Helpdesk Assistance Bar */
+    .opd-help-banner {
       background: #f8fafc;
-      border-left: 3px solid #0284c7;
-      padding: 0.65rem 0.85rem;
-      border-radius: 0 6px 6px 0;
-      font-size: 0.8rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      font-size: 0.82rem;
       color: #475569;
-      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
     }
 
-    /* EMERGENCY RED ALERT BOX */
+    .opd-help-banner a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .opd-help-banner a:hover {
+      text-decoration: underline;
+    }
+
+    /* EMERGENCY RED ALERT BOX (NO RAW BACKEND TAGS) */
     .emergency-card {
       background: #fff5f5;
       border: 2px solid var(--danger);
@@ -564,7 +645,7 @@
     }
 
     .emergency-icon {
-      font-size: 3rem;
+      font-size: 3.2rem;
       margin-bottom: 0.5rem;
     }
 
@@ -578,12 +659,28 @@
     .emergency-advice-box {
       background: #ffffff;
       border: 1.5px solid #fecaca;
-      border-radius: 10px;
-      padding: 1.25rem;
-      font-size: 0.95rem;
-      color: #991b1b;
-      margin: 1.25rem 0;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin: 1.35rem 0;
       text-align: left;
+    }
+
+    .emergency-advice-header {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #991b1b;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .emergency-advice-body {
+      font-size: 0.95rem;
+      color: #7f1d1d;
+      font-weight: 600;
       line-height: 1.6;
     }
 
@@ -595,11 +692,11 @@
       background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
       color: #ffffff;
       text-decoration: none;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 800;
-      padding: 1rem 2rem;
+      padding: 1rem 2.25rem;
       border-radius: 10px;
-      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+      box-shadow: 0 6px 18px rgba(220, 38, 38, 0.35);
       transition: all 0.2s ease;
       margin-top: 0.5rem;
     }
@@ -607,7 +704,7 @@
     .emergency-call-btn:hover {
       background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.45);
+      box-shadow: 0 8px 22px rgba(220, 38, 38, 0.45);
     }
 
     /* Spinner */
@@ -702,13 +799,15 @@
         </div>
         <div class="card-subheading">Fill in details for clinical triage assessment</div>
 
-        <!-- RETURNING PATIENT BANNER (Auto-detected from DB) -->
+        <!-- CLEAN RETURNING PATIENT BANNER -->
         <div id="returning-banner" class="returning-patient-box">
           <div class="title">
-            <span>👋</span> Returning Patient Record Found
+            <span>👋</span> <span id="returning-welcome">Welcome back!</span>
           </div>
-          <div id="returning-text" class="desc">
-            Welcome back! We retrieved your previous hospital visit records.
+          <div class="returning-details-grid">
+            <div><b>Last Visit:</b> <span id="ret-date">-</span></div>
+            <div><b>Prior Clinic:</b> <span id="ret-dept">-</span></div>
+            <div><b>Prior Concern:</b> <i id="ret-concern">"-"</i></div>
           </div>
         </div>
 
@@ -787,7 +886,6 @@
     async function checkPatientHistory() {
       const phone = document.getElementById('patient-phone').value.trim();
       const banner = document.getElementById('returning-banner');
-      const bannerText = document.getElementById('returning-text');
       const nameInput = document.getElementById('patient-name');
 
       if (!phone || phone.length < 5) {
@@ -801,11 +899,16 @@
 
         if (data.found) {
           banner.style.display = 'block';
-          bannerText.innerHTML = `
-            Welcome back, <b>${escapeHtml(data.name)}</b>! <br>
-            Last Visit: <b>${escapeHtml(data.last_visit)}</b> | Prior Routed Clinic: <b>${escapeHtml(data.last_department)}</b><br>
-            Prior Concern: <i>"${escapeHtml(data.last_concern)}"</i>
-          `;
+          document.getElementById('returning-welcome').innerText = `Welcome back, ${data.name || 'Patient'}!`;
+          document.getElementById('ret-date').innerText = data.last_visit || 'Recent';
+          
+          // Clean up prior clinic string (remove pipeline brackets/pipes)
+          let cleanDept = data.last_department || 'General Medicine';
+          cleanDept = cleanDept.replace(/\|/g, '•').replace(/\(|\)/g, '');
+          document.getElementById('ret-dept').innerText = cleanDept;
+          
+          document.getElementById('ret-concern').innerText = `"${data.last_concern || 'Prior consultation'}"`;
+
           if (!nameInput.value.trim() && data.name) {
             nameInput.value = data.name;
           }
@@ -869,9 +972,19 @@
       }
     }
 
-    // Helper: Formats appointment agent output into a clean, neat hospital pass
+    // Helper: Clean raw backend tags from emergency advice
+    function getCleanEmergencyAdvice(data) {
+      if (data.emergency_advice) {
+        let text = data.emergency_advice;
+        text = text.replace(/URGENT:\s*(true|false)/gi, '');
+        text = text.replace(/ADVISORY:\s*/gi, '');
+        return text.trim();
+      }
+      return "Immediate in-person emergency care required. Please go to the nearest emergency department.";
+    }
+
+    // Helper: Formats appointment pass cleanly
     function formatAppointmentSlip(rawText, slot, department) {
-      // Extract Confirmation ID if present
       let code = "APPT-" + Math.floor(10000 + Math.random() * 90000);
       if (rawText) {
         const match = rawText.match(/APPT-[\w\d]+/i);
@@ -923,100 +1036,110 @@
       `;
     }
 
-    // Helper: Formats raw markdown instructions into a clean, neat message
-    function formatCleanInstructions(raw) {
-      if (!raw) return '<p style="color:var(--text-muted);">Standard registration: bring Photo ID and past prescriptions.</p>';
+    // Helper: Builds beautiful, dual-card UI for down details (Pre-Visit & What to Bring)
+    function renderDownDetails(data) {
+      let guidelines = [];
+      let whatToBring = [];
 
-      const lines = raw.split(/\r?\n/);
-      let intakeItems = [];
-      let bringItems = [];
-      let closingNotes = [];
-      let currentSection = null;
-
-      for (let line of lines) {
-        line = line.trim();
-        if (!line || line === '---') continue;
-
-        // Detect sections
-        if (/INTAKE INSTRUCTIONS/i.test(line)) {
-          currentSection = 'intake';
-          continue;
-        } else if (/WHAT TO BRING/i.test(line)) {
-          currentSection = 'bring';
-          continue;
-        }
-
-        // Clean bullet items
-        if (line.startsWith('-') || line.startsWith('*')) {
-          let item = line.replace(/^[-*]\s*/, '').trim();
-          // Clean bold markdown asterisks into strong tags
-          item = item.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-          if (currentSection === 'bring') {
-            bringItems.push(item);
-          } else {
-            intakeItems.push(item);
+      // Use structured instructions if available from backend
+      if (data.structured_instructions) {
+        guidelines = data.structured_instructions.guidelines || [];
+        whatToBring = data.structured_instructions.what_to_bring || [];
+      } else if (data.instructions) {
+        // Fallback robust parser
+        const lines = data.instructions.split(/\r?\n/);
+        let curr = 'guide';
+        for (let l of lines) {
+          l = l.trim();
+          if (!l || l === '---') continue;
+          if (/WHAT TO BRING/i.test(l)) { curr = 'bring'; continue; }
+          if (/INTAKE INSTRUCTIONS/i.test(l)) { curr = 'guide'; continue; }
+          
+          // Check for bullet lines
+          if (/^[-*]\s+/.test(l)) {
+            let item = l.replace(/^[-*]\s+/, '').trim();
+            item = item.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            if (curr === 'bring') whatToBring.push(item);
+            else guidelines.push(item);
           }
-        } else if (!line.startsWith('#') && !line.startsWith('**') && line.length > 5) {
-          // Closing polite text
-          closingNotes.push(line);
         }
       }
 
-      let html = '<div class="prep-container">';
+      // Default fallbacks if empty
+      if (guidelines.length === 0) {
+        guidelines = [
+          "Please arrive 10-15 minutes early for initial vital sign checks.",
+          "Check in at the Central OPD Reception Block B for token verification.",
+          "Follow any fasting or medication guidance prescribed by your doctor."
+        ];
+      }
 
-      // Section 1: Intake Instructions
-      if (intakeItems.length > 0) {
-        html += `
-          <div class="prep-section">
-            <div class="prep-header">
-              <span>⏳</span> Intake Instructions
-            </div>
-            ${intakeItems.map(it => `
-              <div class="prep-bullet-item">
-                <span class="bullet-icon">✓</span>
-                <span>${it}</span>
+      if (whatToBring.length === 0) {
+        whatToBring = [
+          "Government Photo ID (e.g. driver's license, Aadhaar, or passport)",
+          "All previous medical records, prescription slips, and recent scan reports",
+          "Active health insurance card and policy documents"
+        ];
+      }
+
+      return `
+        <div class="prep-dual-grid">
+          <!-- CARD 1: PRE-VISIT GUIDELINES -->
+          <div class="prep-box-card card-guidelines">
+            <div class="prep-box-header">
+              <div class="prep-icon-wrapper icon-blue">⏳</div>
+              <div>
+                <div class="prep-box-title">Pre-Visit Preparation</div>
+                <div class="prep-box-subtitle">Instructions to follow before your slot</div>
               </div>
-            `).join('')}
-          </div>
-        `;
-      }
-
-      // Section 2: What to Bring
-      if (bringItems.length > 0) {
-        html += `
-          <div class="prep-section">
-            <div class="prep-header">
-              <span>📑</span> Required Items to Bring
             </div>
-            ${bringItems.map(it => `
-              <div class="prep-bullet-item">
-                <span class="bullet-icon">✓</span>
-                <span>${it}</span>
+            <ul class="prep-item-list">
+              ${guidelines.map(g => `
+                <li class="prep-list-item">
+                  <span class="check-pill check-blue">✓</span>
+                  <span>${g}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+
+          <!-- CARD 2: REQUIRED ITEMS TO BRING -->
+          <div class="prep-box-card card-bring">
+            <div class="prep-box-header">
+              <div class="prep-icon-wrapper icon-teal">📑</div>
+              <div>
+                <div class="prep-box-title">Required Documents</div>
+                <div class="prep-box-subtitle">Checklist to bring to the hospital</div>
               </div>
-            `).join('')}
+            </div>
+            <ul class="prep-item-list">
+              ${whatToBring.map(b => `
+                <li class="prep-list-item">
+                  <span class="check-pill check-teal">✓</span>
+                  <span>${b}</span>
+                </li>
+              `).join('')}
+            </ul>
           </div>
-        `;
-      }
+        </div>
 
-      // Closing Note
-      if (closingNotes.length > 0) {
-        html += `
-          <div class="prep-closing-msg">
-            💬 ${escapeHtml(closingNotes[closingNotes.length - 1])}
+        <!-- OPD Helpdesk Info Banner -->
+        <div class="opd-help-banner">
+          <span style="font-size:1.1rem;">ℹ️</span>
+          <div>
+            <b>Need assistance before your visit?</b> Contact the LifeCare Outpatient Helpdesk at <a href="tel:0804567890">080-456-7890</a> or visit Central OPD Registration Block B upon arrival.
           </div>
-        `;
-      }
-
-      html += '</div>';
-      return html;
+        </div>
+      `;
     }
 
     function renderOutput(data) {
       const outputContainer = document.getElementById('output-container');
 
-      // 1. EMERGENCY CASE
+      // 1. EMERGENCY CASE (No raw backend tags, clean advice + call button)
       if (data.is_urgent) {
+        const cleanAdvice = getCleanEmergencyAdvice(data);
+
         outputContainer.innerHTML = `
           <div class="emergency-card">
             <div class="emergency-icon">🚨</div>
@@ -1026,12 +1149,16 @@
             </p>
 
             <div class="emergency-advice-box">
-              <strong>Emergency Gate Evaluation:</strong><br>
-              ${escapeHtml(data.emergency_advice || 'Immediate in-person emergency care required.')}
+              <div class="emergency-advice-header">
+                <span>⚠️</span> <span>Critical Clinical Evaluation</span>
+              </div>
+              <div class="emergency-advice-body">
+                ${escapeHtml(cleanAdvice)}
+              </div>
             </div>
 
-            <p style="font-size:0.88rem; color:#991b1b; margin-bottom:1.25rem;">
-              Do not wait for a clinic appointment. Please call emergency dispatch immediately or report to the nearest hospital Emergency Room.
+            <p style="font-size:0.88rem; color:#991b1b; margin-bottom:1.35rem;">
+              Do not wait for a clinic appointment. Please call emergency medical dispatch immediately or report directly to the nearest hospital Emergency Room.
             </p>
 
             <a href="tel:112" class="emergency-call-btn">
@@ -1042,7 +1169,7 @@
         return;
       }
 
-      // 2. ROUTINE OUTPATIENT ROUTING: Clean focused single box
+      // 2. ROUTINE OUTPATIENT ROUTING: Clean single box
       const slots = data.booking_options || [];
       const slotsHtml = slots.map((s, idx) => `
         <div class="slot-card ${idx === 0 ? 'active' : ''}" onclick="selectSlot(${idx}, this)">
@@ -1053,7 +1180,7 @@
       `).join('');
 
       const cleanSlipHtml = formatAppointmentSlip(data.assigned_booking, data.selected_slot || slots[0], data.department);
-      const cleanInstructionsHtml = formatCleanInstructions(data.instructions);
+      const cleanDownDetailsHtml = renderDownDetails(data);
 
       outputContainer.innerHTML = `
         <div class="result-box">
@@ -1087,16 +1214,16 @@
             ${slotsHtml}
           </div>
 
-          <!-- Current Confirmed Booking Slip (Formatted Clean Message) -->
+          <!-- Current Confirmed Booking Slip -->
           <div id="booking-slip-container">
             ${cleanSlipHtml}
           </div>
 
-          <!-- Pre-Consultation Instructions & What to Bring (Clean Formatted) -->
-          <div class="section-title">
+          <!-- DOWN DETAILS: BEAUTIFUL DUAL-CARD MEDICAL UI -->
+          <div class="section-title" style="margin-top:1.75rem;">
             <span>📋</span> Instructions & Required Items to Bring
           </div>
-          ${cleanInstructionsHtml}
+          ${cleanDownDetailsHtml}
         </div>
       `;
     }
@@ -1125,7 +1252,6 @@
         });
         const respData = await res.json();
         if (respData.success) {
-          // Re-render clean formatted appointment slip with new slot details!
           document.getElementById('booking-slip-container').innerHTML = 
             formatAppointmentSlip(respData.confirmation || respData.code, selected, currentRoutingData.department);
         }
