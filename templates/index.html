@@ -3,32 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hospital AI Patient Routing System</title>
+  <title>Hospital Patient Triage & Appointment System</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --card-border: #334155;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --primary: #38bdf8;
-      --primary-hover: #0ea5e9;
-      --accent: #6366f1;
-      --danger: #ef4444;
-      --danger-bg: rgba(239, 68, 68, 0.12);
-      --success: #10b981;
-      --success-bg: rgba(16, 185, 129, 0.12);
-      --warning: #f59e0b;
-      --warning-bg: rgba(245, 158, 11, 0.12);
-      --purple: #a855f7;
-      --purple-bg: rgba(168, 85, 247, 0.12);
-      --blue: #3b82f6;
-      --blue-bg: rgba(59, 130, 246, 0.12);
-      --cyan: #06b6d4;
-      --cyan-bg: rgba(6, 182, 212, 0.12);
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --primary-light: #e0f2fe;
+      --teal: #0d9488;
+      --teal-light: #ccfbf1;
+      --danger: #dc2626;
+      --danger-light: #fee2e2;
+      --success: #16a34a;
+      --success-light: #dcfce7;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
     }
 
     * {
@@ -38,599 +35,708 @@
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg);
-      color: var(--text);
+      color: var(--text-main);
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
       line-height: 1.5;
     }
 
+    /* Hospital Navigation Bar */
     header {
-      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-      border-bottom: 1px solid var(--card-border);
-      padding: 1.5rem 2rem;
+      background-color: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2.5rem;
       position: sticky;
       top: 0;
       z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .brand {
+    .hospital-brand {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.85rem;
+      text-decoration: none;
     }
 
-    .brand-icon {
-      font-size: 1.8rem;
+    .brand-cross {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #0284c7 0%, #0d9488 100%);
+      color: #ffffff;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 800;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);
     }
 
-    .brand-title {
-      font-size: 1.35rem;
+    .hospital-title {
+      font-size: 1.25rem;
       font-weight: 700;
-      color: #fff;
-      letter-spacing: -0.02em;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
     }
 
-    .brand-subtitle {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .db-status-pill {
+    .hospital-subtitle {
       font-size: 0.8rem;
-      padding: 0.35rem 0.85rem;
-      border-radius: 9999px;
-      background: #334155;
-      color: #38bdf8;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .emergency-badge {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      font-weight: 500;
-      border: 1px solid #475569;
+      gap: 0.5rem;
+      background-color: #fff1f2;
+      border: 1px solid #fecdd3;
+      padding: 0.4rem 0.9rem;
+      border-radius: 9999px;
+      color: #be123c;
+      font-size: 0.82rem;
+      font-weight: 600;
     }
 
-    .dot {
+    .pulse-dot {
       width: 8px;
       height: 8px;
+      background-color: #e11d48;
       border-radius: 50%;
-      background: #10b981;
-      display: inline-block;
-      box-shadow: 0 0 6px #10b981;
+      animation: pulse 1.8s infinite;
     }
 
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 2rem;
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(225, 29, 72, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); }
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 1160px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      width: 100%;
+    }
+
+    .hero-banner {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .hero-banner h1 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 0.35rem;
+    }
+
+    .hero-banner p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .layout-grid {
       display: grid;
-      grid-template-columns: 420px 1fr;
+      grid-template-columns: 460px 1fr;
       gap: 2rem;
+      align-items: start;
     }
 
-    @media (max-width: 980px) {
-      .container {
+    @media (max-width: 900px) {
+      .layout-grid {
         grid-template-columns: 1fr;
       }
     }
 
-    .panel {
+    /* Cards */
+    .white-card {
       background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 1.75rem;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: var(--shadow-sm);
     }
 
-    .panel-title {
-      font-size: 1.15rem;
-      font-weight: 600;
-      margin-bottom: 0.35rem;
+    .card-heading {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-main);
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      margin-bottom: 0.25rem;
     }
 
-    .panel-subtitle {
+    .card-subheading {
       font-size: 0.85rem;
       color: var(--text-muted);
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.5rem;
     }
 
-    .preset-container {
-      margin-bottom: 1.25rem;
-    }
-
-    .preset-label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 0.5rem;
-    }
-
-    .preset-buttons {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.5rem;
-    }
-
-    .preset-btn {
-      background: #0f172a;
-      border: 1px solid var(--card-border);
-      color: #cbd5e1;
-      padding: 0.5rem 0.6rem;
-      font-size: 0.75rem;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-align: center;
-    }
-
-    .preset-btn:hover {
-      border-color: var(--primary);
-      color: #fff;
-      transform: translateY(-1px);
-    }
-
+    /* Form Styles */
     .form-group {
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.25rem;
     }
 
     label {
       display: block;
       font-size: 0.85rem;
-      font-weight: 500;
-      color: #cbd5e1;
-      margin-bottom: 0.4rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 0.45rem;
     }
 
     input, textarea {
       width: 100%;
-      background: #0f172a;
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 0.75rem 0.9rem;
-      color: #fff;
-      font-size: 0.95rem;
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+      font-size: 0.92rem;
+      color: #0f172a;
       font-family: inherit;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
     }
 
     input:focus, textarea:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
     }
 
     textarea {
       resize: vertical;
-      min-height: 110px;
+      min-height: 120px;
     }
 
-    .submit-btn {
+    /* Returning Patient Banner */
+    .returning-patient-box {
+      display: none;
+      background: #f0f9ff;
+      border: 1.5px solid #bae6fd;
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 1.25rem;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .returning-patient-box .title {
+      font-weight: 700;
+      color: #0369a1;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .returning-patient-box .desc {
+      font-size: 0.8rem;
+      color: #0c4a6e;
+      line-height: 1.4;
+    }
+
+    .submit-button {
       width: 100%;
       background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-      color: #fff;
+      color: #ffffff;
       border: none;
-      padding: 0.85rem;
-      border-radius: 8px;
+      padding: 0.95rem;
+      border-radius: 10px;
       font-size: 1rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+      transition: all 0.2s ease;
     }
 
-    .submit-btn:hover:not(:disabled) {
+    .submit-button:hover:not(:disabled) {
       background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
       transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(2, 132, 199, 0.4);
+      box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
     }
 
-    .submit-btn:disabled {
-      opacity: 0.6;
+    .submit-button:disabled {
+      opacity: 0.65;
       cursor: not-allowed;
     }
 
-    .progress-bar-container {
-      display: none;
+    /* Output Section */
+    .empty-output-state {
+      text-align: center;
+      padding: 4.5rem 2rem;
+      color: var(--text-muted);
+    }
+
+    .empty-output-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      color: #cbd5e1;
+    }
+
+    /* Clean Focused Routing Result Box */
+    .result-box {
+      background: #ffffff;
+      border: 1.5px solid #e0f2fe;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: var(--shadow-md);
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.25rem;
       margin-bottom: 1.5rem;
-      background: #0f172a;
-      border-radius: 8px;
-      padding: 0.25rem;
-      border: 1px solid var(--card-border);
     }
 
-    .progress-bar {
-      height: 6px;
-      background: linear-gradient(90deg, #38bdf8, #818cf8);
-      border-radius: 6px;
-      width: 0%;
-      transition: width 0.4s ease;
+    .dept-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 0.4rem 1rem;
+      border-radius: 9999px;
+      border: 1px solid #bae6fd;
     }
 
-    .progress-text {
+    .clinical-rationale-box {
+      background: #f8fafc;
+      border-left: 4px solid var(--primary);
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.92rem;
+      color: #334155;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    /* Appointment Slot Options */
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .slots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .slot-card {
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      background: #ffffff;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .slot-card:hover {
+      border-color: var(--primary);
+      background: #f0f9ff;
+    }
+
+    .slot-card.active {
+      border-color: var(--primary);
+      background: #f0f9ff;
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+    }
+
+    .slot-doctor {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: #0f172a;
+    }
+
+    .slot-time {
       font-size: 0.8rem;
       color: var(--primary);
       font-weight: 600;
-      margin-top: 0.4rem;
-      display: flex;
-      justify-content: space-between;
+      margin-top: 0.2rem;
     }
 
-    .agent-card {
-      background: #1e293b;
-      border: 1px solid var(--card-border);
+    .slot-room {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    /* Confirmed Booking Slip */
+    .confirmed-slip {
+      background: #f0fdf4;
+      border: 1.5px solid #bbf7d0;
       border-radius: 12px;
-      padding: 1.35rem 1.5rem;
-      margin-bottom: 1.25rem;
-      transition: all 0.25s ease;
-      position: relative;
-      overflow: hidden;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
     }
 
-    .agent-card.emergency {
-      border-left: 6px solid var(--danger);
-      background: linear-gradient(180deg, rgba(239, 68, 68, 0.12) 0%, rgba(30, 41, 59, 0.9) 100%);
-      box-shadow: 0 0 25px rgba(239, 68, 68, 0.25);
-    }
-
-    .agent-card.success-gate {
-      border-left: 6px solid var(--success);
-      background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, rgba(30, 41, 59, 0.9) 100%);
-    }
-
-    .agent-card.intake {
-      border-left: 6px solid var(--blue);
-    }
-
-    .agent-card.triage {
-      border-left: 6px solid var(--purple);
-    }
-
-    .agent-card.rag {
-      border-left: 6px solid var(--cyan);
-    }
-
-    .agent-card.appointment {
-      border-left: 6px solid var(--warning);
-      background: linear-gradient(180deg, rgba(245, 158, 11, 0.08) 0%, rgba(30, 41, 59, 0.9) 100%);
-    }
-
-    .agent-header {
+    .slip-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.85rem;
-    }
-
-    .badge {
-      display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      font-size: 0.72rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .slip-status {
+      font-size: 0.75rem;
       font-weight: 700;
-      padding: 0.3rem 0.75rem;
-      border-radius: 9999px;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      background: #dcfce7;
+      color: #15803d;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
     }
 
-    .badge-danger { background: var(--danger-bg); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
-    .badge-success { background: var(--success-bg); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); }
-    .badge-blue { background: var(--blue-bg); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3); }
-    .badge-purple { background: var(--purple-bg); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); }
-    .badge-cyan { background: var(--cyan-bg); color: #67e8f9; border: 1px solid rgba(6, 182, 212, 0.3); }
-    .badge-warning { background: var(--warning-bg); color: #fde68a; border: 1px solid rgba(245, 158, 11, 0.3); }
-
-    .card-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: #fff;
+    .slip-text {
+      font-size: 0.88rem;
+      color: #166534;
+      white-space: pre-wrap;
+      line-height: 1.5;
     }
 
-    .card-body {
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 8px;
-      padding: 1rem 1.15rem;
-      font-size: 0.92rem;
-      color: #e2e8f0;
+    /* What to Bring & Prep Instructions */
+    .prep-box {
+      background: #fdfdfd;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem;
+      font-size: 0.88rem;
+      color: #334155;
       white-space: pre-wrap;
       line-height: 1.6;
     }
 
-    .empty-state {
+    /* EMERGENCY RED ALERT BOX */
+    .emergency-card {
+      background: #fff5f5;
+      border: 2px solid var(--danger);
+      border-radius: 16px;
+      padding: 2.25rem 2rem;
+      box-shadow: 0 10px 25px -5px rgba(220, 38, 38, 0.15);
+      animation: fadeIn 0.4s ease;
       text-align: center;
-      padding: 4rem 2rem;
-      color: var(--text-muted);
     }
 
-    .empty-icon {
+    .emergency-icon {
       font-size: 3rem;
-      margin-bottom: 1rem;
-      opacity: 0.6;
+      margin-bottom: 0.5rem;
     }
 
-    /* Database Table styling */
-    .db-section {
-      margin-top: 2rem;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 1.75rem;
+    .emergency-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--danger);
+      margin-bottom: 0.5rem;
     }
 
-    .db-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.25rem;
-    }
-
-    .refresh-btn {
-      background: #0f172a;
-      border: 1px solid var(--card-border);
-      color: var(--primary);
-      padding: 0.4rem 0.85rem;
-      font-size: 0.8rem;
-      font-weight: 600;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .refresh-btn:hover {
-      border-color: var(--primary);
-      background: #1e293b;
-    }
-
-    .table-responsive {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
+    .emergency-advice-box {
+      background: #ffffff;
+      border: 1.5px solid #fecaca;
+      border-radius: 10px;
+      padding: 1.25rem;
+      font-size: 0.95rem;
+      color: #991b1b;
+      margin: 1.25rem 0;
       text-align: left;
+      white-space: pre-wrap;
+      line-height: 1.6;
     }
 
-    th {
-      background: #0f172a;
-      color: #94a3b8;
-      font-weight: 600;
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--card-border);
-      text-transform: uppercase;
-      font-size: 0.75rem;
-      letter-spacing: 0.04em;
+    .emergency-call-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 800;
+      padding: 1rem 2rem;
+      border-radius: 10px;
+      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+      transition: all 0.2s ease;
+      margin-top: 0.5rem;
     }
 
-    td {
-      padding: 0.85rem 1rem;
-      border-bottom: 1px solid #243248;
-      color: #e2e8f0;
+    .emergency-call-btn:hover {
+      background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.45);
     }
 
-    tr:hover td {
-      background: rgba(255, 255, 255, 0.02);
-    }
-
+    /* Spinner */
     .spinner {
       display: inline-block;
       width: 18px;
       height: 18px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.4);
       border-radius: 50%;
-      border-top-color: #fff;
+      border-top-color: #ffffff;
       animation: spin 0.8s linear infinite;
     }
 
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    /* Professional Hospital Footer */
+    footer {
+      background-color: #ffffff;
+      border-top: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      margin-top: 3rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .footer-hospital {
+      font-weight: 700;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .footer-links a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
 
+  <!-- HOSPITAL HEADER -->
   <header>
-    <div class="brand">
-      <span class="brand-icon">🏥</span>
-      <div>
-        <div class="brand-title">Hospital Patient Routing AI Agent</div>
-        <div class="brand-subtitle">Autonomous Multi-Agent Clinical Triage & Scheduling</div>
+    <div class="header-inner">
+      <div class="hospital-brand">
+        <div class="brand-cross">+</div>
+        <div>
+          <div class="hospital-title">LifeCare Multi-Speciality Hospital</div>
+          <div class="hospital-subtitle">Outpatient Department (OPD) Intelligent Triage Desk</div>
+        </div>
       </div>
-    </div>
-    <div class="db-status-pill">
-      <span class="dot"></span>
-      <span id="active-db-text">Database: Connecting...</span>
+      <div class="emergency-badge">
+        <span class="pulse-dot"></span>
+        <span>24/7 Emergency: <b>112 / 108</b></span>
+      </div>
     </div>
   </header>
 
-  <div class="container">
-    <!-- LEFT PANEL: INPUT FORM & PRESETS -->
-    <div class="panel">
-      <div class="panel-title">📋 Patient Check-In</div>
-      <div class="panel-subtitle">Enter details to trigger the 5-agent clinical pipeline</div>
-
-      <div class="preset-container">
-        <div class="preset-label">⚡ Quick Viva Demo Presets</div>
-        <div class="preset-buttons">
-          <button class="preset-btn" onclick="loadPreset('emergency')">🚨 Emergency</button>
-          <button class="preset-btn" onclick="loadPreset('ortho')">🦴 Ortho</button>
-          <button class="preset-btn" onclick="loadPreset('returning')">🔄 Returning</button>
-        </div>
-      </div>
-
-      <form id="routing-form" onsubmit="handleFormSubmit(event)">
-        <div class="form-group">
-          <label for="name">Patient Full Name</label>
-          <input type="text" id="name" required placeholder="e.g. Rahul Sharma" value="Rahul Sharma">
-        </div>
-
-        <div class="form-group">
-          <label for="phone">Contact Phone Number (Database Memory Key)</label>
-          <input type="text" id="phone" required placeholder="e.g. 9876543210" value="9876543210">
-        </div>
-
-        <div class="form-group">
-          <label for="concern">Patient Concern / Symptoms</label>
-          <textarea id="concern" required placeholder="Describe symptoms or reasons for visit...">Sharp pain in right knee when climbing stairs and slight swelling</textarea>
-        </div>
-
-        <button type="submit" id="submit-btn" class="submit-btn">
-          <span id="btn-text">🚀 Run Routing Pipeline</span>
-          <span id="btn-spinner" class="spinner" style="display: none;"></span>
-        </button>
-      </form>
+  <main>
+    <div class="hero-banner">
+      <h1>Patient Intake & Clinical Department Routing</h1>
+      <p>Enter your symptoms to receive an automated safety screening, clinical specialty routing, and appointment scheduling.</p>
     </div>
 
-    <!-- RIGHT PANEL: AGENT EXECUTION PROGRESS & VISIBLE OUTPUT -->
-    <div class="panel" style="min-height: 520px;">
-      <div class="panel-title">⚡ Multi-Agent Execution Output</div>
-      <div class="panel-subtitle">Visual step-by-step pipeline across all 5 specialized agents</div>
-
-      <div id="progress-container" class="progress-bar-container">
-        <div id="progress-bar" class="progress-bar"></div>
-        <div class="progress-text">
-          <span id="progress-step">Processing Agent Pipeline...</span>
-          <span id="progress-percent">0%</span>
+    <div class="layout-grid">
+      <!-- LEFT FORM -->
+      <div class="white-card">
+        <div class="card-heading">
+          <span>📋</span> Patient Registration
         </div>
+        <div class="card-subheading">Fill in details for clinical triage assessment</div>
+
+        <!-- RETURNING PATIENT BANNER (Auto-detected from DB) -->
+        <div id="returning-banner" class="returning-patient-box">
+          <div class="title">
+            <span>👋</span> Returning Patient Record Found
+          </div>
+          <div id="returning-text" class="desc">
+            Welcome back! We retrieved your previous hospital visit records.
+          </div>
+        </div>
+
+        <form id="triage-form" onsubmit="handleTriageSubmit(event)">
+          <div class="form-group">
+            <label for="patient-phone">Phone Number <span style="color:var(--primary);">*</span></label>
+            <input 
+              type="tel" 
+              id="patient-phone" 
+              required 
+              placeholder="e.g. 9876543210" 
+              onblur="checkPatientHistory()"
+            >
+            <small style="color:var(--text-muted); font-size:0.75rem; margin-top:0.25rem; display:block;">
+              Used to retrieve prior visit memory from the hospital database.
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label for="patient-name">Patient Full Name <span style="color:var(--primary);">*</span></label>
+            <input type="text" id="patient-name" required placeholder="e.g. Rahul Sharma">
+          </div>
+
+          <div class="form-group">
+            <label for="patient-concern">Describe Your Symptoms / Medical Concern <span style="color:var(--primary);">*</span></label>
+            <textarea 
+              id="patient-concern" 
+              required 
+              placeholder="Please describe what you are experiencing (e.g. location of pain, duration, severity, stiffness)..."
+            ></textarea>
+          </div>
+
+          <button type="submit" id="submit-btn" class="submit-button">
+            <span id="btn-text">Submit for Clinical Routing</span>
+            <span id="btn-spinner" class="spinner" style="display: none;"></span>
+          </button>
+        </form>
       </div>
 
-      <div id="output-area">
-        <div class="empty-state">
-          <div class="empty-icon">🩺</div>
-          <h3>Awaiting Patient Submission</h3>
-          <p style="margin-top: 0.5rem; font-size: 0.9rem;">Fill the form on the left or click a Quick Demo Preset, then click <b>Run Routing Pipeline</b>.</p>
+      <!-- RIGHT RESULTS BOX -->
+      <div id="output-container">
+        <div class="white-card" style="min-height: 440px; display:flex; align-items:center; justify-content:center;">
+          <div class="empty-output-state">
+            <div class="empty-output-icon">🩺</div>
+            <h3 style="font-size:1.15rem; color:#334155;">Ready for Patient Check-In</h3>
+            <p style="font-size:0.88rem; max-width:320px; margin:0.4rem auto 0 auto;">
+              Enter your contact number and symptoms on the left to initiate safety evaluation and department routing.
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 
-  <!-- BOTTOM: REAL-TIME HOSPITAL DATABASE INSPECTION -->
-  <div style="max-width: 1280px; margin: 0 auto; padding: 0 2rem 3rem 2rem;">
-    <div class="db-section">
-      <div class="db-header">
-        <div>
-          <div class="panel-title">🗄️ Real-Time Hospital Database Records</div>
-          <div class="panel-subtitle" style="margin-bottom: 0;">Verified memory store tracking patient visits, routed departments, and appointment slots</div>
-        </div>
-        <button class="refresh-btn" onclick="fetchRecords()">🔄 Refresh Records</button>
+  <!-- PROFESSIONAL HOSPITAL FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-hospital">🏥 LifeCare Multi-Speciality Hospital & Research Center</div>
+        <div>OPD Consultation Hours: Monday – Saturday, 8:00 AM – 8:00 PM | Central Triage Block B</div>
       </div>
-
-      <div class="table-responsive">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Patient Name</th>
-              <th>Phone</th>
-              <th>Reported Concern</th>
-              <th>Assigned Department & Slot</th>
-              <th>Visit Timestamp</th>
-            </tr>
-          </thead>
-          <tbody id="records-tbody">
-            <tr>
-              <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Loading records...</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="footer-links">
+        <span>Emergency Ambulance: <a href="tel:102">102</a></span>
+        <span>National Emergency: <a href="tel:112">112</a></span>
       </div>
     </div>
-  </div>
+    <div style="max-width: 1200px; margin: 1.25rem auto 0 auto; padding-top: 1rem; border-top: 1px solid #f1f5f9; font-size: 0.75rem; color: #94a3b8; text-align: center;">
+      LifeCare Clinical Decision Support & Routing AI • Designed for hospital outpatient triage optimization.
+    </div>
+  </footer>
 
   <script>
-    function loadPreset(type) {
-      if (type === 'emergency') {
-        document.getElementById('name').value = "Vikram Rao";
-        document.getElementById('phone').value = "9876543210";
-        document.getElementById('concern').value = "Sudden severe crushing chest pain radiating to left arm, shortness of breath, and cold sweat.";
-      } else if (type === 'ortho') {
-        document.getElementById('name').value = "Ananya Sen";
-        document.getElementById('phone').value = "9845123456";
-        document.getElementById('concern').value = "Sharp pain in right knee joint for 4 days when walking or climbing stairs.";
-      } else if (type === 'returning') {
-        document.getElementById('name').value = "Rahul Sharma";
-        document.getElementById('phone').value = "9876543210";
-        document.getElementById('concern').value = "Follow up: Still experiencing mild knee stiffness in the morning.";
-      }
-    }
+    let currentRoutingData = null;
 
-    async function fetchDatabaseStatus() {
+    // Real-time Database Memory Check when user enters phone
+    async function checkPatientHistory() {
+      const phone = document.getElementById('patient-phone').value.trim();
+      const banner = document.getElementById('returning-banner');
+      const bannerText = document.getElementById('returning-text');
+      const nameInput = document.getElementById('patient-name');
+
+      if (!phone || phone.length < 5) {
+        banner.style.display = 'none';
+        return;
+      }
+
       try {
-        const res = await fetch('/api/status');
+        const res = await fetch(`/api/check-patient?phone=${encodeURIComponent(phone)}`);
         const data = await res.json();
-        document.getElementById('active-db-text').innerText = data.database || "Database: Connected";
-      } catch (err) {
-        document.getElementById('active-db-text').innerText = "Database: Active";
-      }
-    }
 
-    async function fetchRecords() {
-      const tbody = document.getElementById('records-tbody');
-      try {
-        const res = await fetch('/api/records');
-        const records = await res.json();
-        
-        if (!records || records.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:1.5rem; color:#94a3b8;">No records stored yet. Run a patient check-in to see records here.</td></tr>';
-          return;
+        if (data.found) {
+          banner.style.display = 'block';
+          bannerText.innerHTML = `
+            Welcome back, <b>${escapeHtml(data.name)}</b>! <br>
+            Last Visit: <b>${escapeHtml(data.last_visit)}</b> | Prior Routed Clinic: <b>${escapeHtml(data.last_department)}</b><br>
+            Prior Concern: <i>"${escapeHtml(data.last_concern)}"</i>
+          `;
+          if (!nameInput.value.trim() && data.name) {
+            nameInput.value = data.name;
+          }
+        } else {
+          banner.style.display = 'none';
         }
-
-        tbody.innerHTML = records.map(r => `
-          <tr>
-            <td>#${r.id}</td>
-            <td style="font-weight:600; color:#fff;">${escapeHtml(r.name)}</td>
-            <td><code>${escapeHtml(r.phone)}</code></td>
-            <td style="max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(r.last_concern)}">${escapeHtml(r.last_concern)}</td>
-            <td><span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 2px 8px; border-radius: 4px; font-weight: 500;">${escapeHtml(r.routed_department)}</span></td>
-            <td style="color:#94a3b8; font-size: 0.8rem;">${escapeHtml(r.visit_date || '')}</td>
-          </tr>
-        `).join('');
       } catch (err) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#ef4444;">Failed to fetch database records.</td></tr>';
+        banner.style.display = 'none';
       }
     }
 
-    async function handleFormSubmit(e) {
+    async function handleTriageSubmit(e) {
       e.preventDefault();
 
-      const name = document.getElementById('name').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const patient_concern = document.getElementById('concern').value.trim();
+      const name = document.getElementById('patient-name').value.trim();
+      const phone = document.getElementById('patient-phone').value.trim();
+      const patient_concern = document.getElementById('patient-concern').value.trim();
 
       if (!name || !phone || !patient_concern) return;
 
       const submitBtn = document.getElementById('submit-btn');
       const btnText = document.getElementById('btn-text');
       const btnSpinner = document.getElementById('btn-spinner');
-      const progressContainer = document.getElementById('progress-container');
-      const progressBar = document.getElementById('progress-bar');
-      const progressStep = document.getElementById('progress-step');
-      const progressPercent = document.getElementById('progress-percent');
-      const outputArea = document.getElementById('output-area');
+      const outputContainer = document.getElementById('output-container');
 
-      // UI Loading state
       submitBtn.disabled = true;
-      btnText.innerText = "Running Agents...";
+      btnText.innerText = "Evaluating Routing...";
       btnSpinner.style.display = "inline-block";
-      progressContainer.style.display = "block";
-      progressBar.style.width = "25%";
-      progressStep.innerText = "Evaluating Safety Gate & Symptoms...";
-      progressPercent.innerText = "25%";
-      outputArea.innerHTML = '<div style="text-align:center; padding:3rem; color:#94a3b8;"><div class="spinner" style="width:30px; height:30px; margin-bottom:1rem;"></div><br>Autonomous Agents executing sequentially...</div>';
+
+      outputContainer.innerHTML = `
+        <div class="white-card" style="min-height: 440px; display:flex; align-items:center; justify-content:center;">
+          <div style="text-align:center; padding:2rem; color:var(--text-muted);">
+            <div class="spinner" style="width:36px; height:36px; border-color: rgba(2,132,199,0.25); border-top-color: var(--primary); margin-bottom:1rem;"></div>
+            <h4 style="color:#0f172a; margin-bottom:0.25rem;">Analyzing Symptoms & Triage Rules...</h4>
+            <p style="font-size:0.85rem;">Checking safety protocols, medical speciality matching, and doctor schedules.</p>
+          </div>
+        </div>
+      `;
 
       try {
         const response = await fetch('/api/route', {
@@ -639,102 +745,152 @@
           body: JSON.stringify({ name, phone, patient_concern })
         });
 
-        const result = await response.json();
-
-        progressBar.style.width = "100%";
-        progressPercent.innerText = "100%";
-        progressStep.innerText = result.is_urgent ? "Emergency Intercepted!" : "Routing Complete!";
-
-        renderAgentOutputs(result);
-        fetchRecords();
+        const data = await response.json();
+        currentRoutingData = data;
+        renderOutput(data);
       } catch (err) {
-        outputArea.innerHTML = `
-          <div class="agent-card emergency">
-            <div class="card-title" style="color:#ef4444;">Pipeline Execution Error</div>
-            <div class="card-body">${err.message || 'Error communicating with backend server.'}</div>
+        outputContainer.innerHTML = `
+          <div class="white-card" style="border-left: 4px solid var(--danger);">
+            <h3 style="color:var(--danger); margin-bottom:0.5rem;">Clinical Evaluation Error</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem;">Could not complete routing: ${escapeHtml(err.message)}</p>
           </div>
         `;
       } finally {
         submitBtn.disabled = false;
-        btnText.innerText = "🚀 Run Routing Pipeline";
+        btnText.innerText = "Submit for Clinical Routing";
         btnSpinner.style.display = "none";
       }
     }
 
-    function renderAgentOutputs(result) {
-      const outputArea = document.getElementById('output-area');
-      const steps = result.step_results || {};
+    function renderOutput(data) {
+      const outputContainer = document.getElementById('output-container');
 
-      if (result.is_urgent) {
-        outputArea.innerHTML = `
-          <div class="agent-card emergency">
-            <div class="agent-header">
-              <span class="badge badge-danger">Step 1: Safety Gate — RED FLAG ALERT</span>
-              <span style="color:#ef4444; font-weight:700; font-size:0.85rem;">CRITICAL INTERCEPT</span>
+      // 1. EMERGENCY CASE
+      if (data.is_urgent) {
+        outputContainer.innerHTML = `
+          <div class="emergency-card">
+            <div class="emergency-icon">🚨</div>
+            <div class="emergency-title">URGENT MEDICAL ADVISORY DETECTED</div>
+            <p style="color:#7f1d1d; font-size:0.92rem; font-weight:600;">
+              Standard outpatient appointment routing has been halted immediately to prioritize patient life safety.
+            </p>
+
+            <div class="emergency-advice-box">
+              <strong>Emergency Gate Evaluation:</strong><br>
+              ${escapeHtml(data.emergency_advice || 'Immediate in-person emergency care required.')}
             </div>
-            <div class="card-title" style="color:#f87171; margin-bottom:0.5rem;">🚨 Medical Emergency Red Flag Detected</div>
-            <div class="card-body" style="border-color: rgba(239, 68, 68, 0.4); color: #fecaca;">${escapeHtml(steps.safety || 'Urgent emergency symptoms detected.')}</div>
-            <div style="margin-top: 1rem; padding: 0.9rem; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; color: #fff; font-size: 0.9rem;">
-              ⚠️ <b>Outpatient routing halted immediately to prioritize patient life safety.</b><br>
-              Please dial emergency services (<b>112 or 108</b>) or report immediately to the nearest hospital Emergency Room.
-            </div>
+
+            <p style="font-size:0.88rem; color:#991b1b; margin-bottom:1.25rem;">
+              Do not wait for a clinic appointment. Please call emergency dispatch immediately or report to the nearest hospital Emergency Room.
+            </p>
+
+            <a href="tel:112" class="emergency-call-btn">
+              📞 Call Emergency Services (Dial 112 / 108)
+            </a>
           </div>
         `;
         return;
       }
 
-      // Routine Outpatient: Render all 5 agents
-      outputArea.innerHTML = `
-        <!-- STEP 1: SAFETY GATE -->
-        <div class="agent-card success-gate">
-          <div class="agent-header">
-            <span class="badge badge-success">Step 1: Safety Gate — PASSED</span>
-            <span style="color:#10b981; font-size:0.8rem; font-weight:600;">Routine Non-Emergency</span>
-          </div>
-          <div class="card-title" style="margin-bottom:0.4rem;">✅ Outpatient Safety Evaluation</div>
-          <div class="card-body">${escapeHtml(steps.safety)}</div>
+      // 2. ROUTINE OUTPATIENT ROUTING: Clean focused single box
+      const slots = data.booking_options || [];
+      const slotsHtml = slots.map((s, idx) => `
+        <div class="slot-card ${idx === 0 ? 'active' : ''}" onclick="selectSlot(${idx}, this)">
+          <div class="slot-doctor">${escapeHtml(s.doctor)}</div>
+          <div class="slot-time">${escapeHtml(s.time)}</div>
+          <div class="slot-room">${escapeHtml(s.room)} • ${escapeHtml(s.type || 'Consultation')}</div>
         </div>
+      `).join('');
 
-        <!-- STEP 2: INTAKE & MEMORY -->
-        <div class="agent-card intake">
-          <div class="agent-header">
-            <span class="badge badge-blue">Step 2: Intake & Database Memory Check</span>
-            <span style="color:#60a5fa; font-size:0.8rem; font-weight:600;">Context Recalled</span>
+      outputContainer.innerHTML = `
+        <div class="result-box">
+          <!-- Top Department & Status -->
+          <div class="result-header">
+            <div>
+              <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); display:block; margin-bottom:0.2rem;">Recommended Department</span>
+              <div class="dept-badge">
+                <span>🏥</span>
+                <span>${escapeHtml(data.department || 'General Medicine')}</span>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <span style="display:inline-block; font-size:0.75rem; font-weight:700; color:#15803d; background:#dcfce7; padding:0.25rem 0.65rem; border-radius:9999px;">
+                ✓ Safe for Outpatient OPD
+              </span>
+            </div>
           </div>
-          <div class="card-title" style="margin-bottom:0.4rem;">📋 Structured Intake & Memory Ticket</div>
-          <div class="card-body">${escapeHtml(steps.intake)}</div>
-        </div>
 
-        <!-- STEP 3: TRIAGE ROUTER -->
-        <div class="agent-card triage">
-          <div class="agent-header">
-            <span class="badge badge-purple">Step 3: Triage Department Routing</span>
-            <span style="color:#c084fc; font-size:0.8rem; font-weight:600;">No Medical Diagnosis</span>
+          <!-- Clinical Rationale -->
+          <div class="clinical-rationale-box">
+            <strong>Clinical Routing Rationale:</strong><br>
+            ${escapeHtml(data.rationale || 'Patient symptoms are appropriate for clinical evaluation in this department.')}
           </div>
-          <div class="card-title" style="margin-bottom:0.4rem;">🎯 Routed Department: <span style="background: rgba(168, 85, 247, 0.25); color: #e9d5ff; padding: 2px 8px; border-radius: 4px;">${escapeHtml(steps.department || 'General Medicine')}</span></div>
-          <div class="card-body">${escapeHtml(steps.triage)}</div>
-        </div>
 
-        <!-- STEP 4: INFORMATION AGENT (RAG) -->
-        <div class="agent-card rag">
-          <div class="agent-header">
-            <span class="badge badge-cyan">Step 4: Information Agent (RAG)</span>
-            <span style="color:#22d3ee; font-size:0.8rem; font-weight:600;">Grounded Knowledge Base</span>
+          <!-- Doctor Booking Options -->
+          <div class="section-title">
+            <span>👨‍⚕️</span> Available Doctor Consultation Slots
           </div>
-          <div class="card-title" style="margin-bottom:0.4rem;">📚 Department Instructions & Preparation</div>
-          <div class="card-body">${escapeHtml(steps.info)}</div>
-        </div>
+          <div class="slots-grid">
+            ${slotsHtml}
+          </div>
 
-        <!-- STEP 5: APPOINTMENT CONFIRMATION SLIP -->
-        <div class="agent-card appointment">
-          <div class="agent-header">
-            <span class="badge badge-warning">Step 5: Appointment Booking Slip</span>
-            <span style="color:#fbbf24; font-size:0.8rem; font-weight:600;">Logged to Database</span>
+          <!-- Current Confirmed Booking Slip -->
+          <div id="booking-slip-container">
+            <div class="confirmed-slip">
+              <div class="slip-header">
+                <span style="font-weight:700; color:#166534; font-size:0.9rem;">🎫 Confirmed OPD Appointment Pass</span>
+                <span class="slip-status">Confirmed & Logged</span>
+              </div>
+              <div class="slip-text">${escapeHtml(data.assigned_booking)}</div>
+            </div>
           </div>
-          <div class="card-title" style="margin-bottom:0.4rem;">🎫 Confirmed Digital Appointment Slip</div>
-          <div class="card-body" style="background:#0b1120; border-color:#d97706;">${escapeHtml(steps.appointment)}</div>
+
+          <!-- Pre-Consultation Instructions & What to Bring (RAG) -->
+          <div class="section-title">
+            <span>📋</span> Instructions & Required Items to Bring
+          </div>
+          <div class="prep-box">${escapeHtml(data.instructions)}</div>
         </div>
       `;
+    }
+
+    async function selectSlot(index, element) {
+      if (!currentRoutingData || !currentRoutingData.booking_options) return;
+      
+      const slots = currentRoutingData.booking_options;
+      const selected = slots[index];
+      if (!selected) return;
+
+      // Update UI active card
+      document.querySelectorAll('.slot-card').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+
+      // Update booking via API
+      try {
+        const res = await fetch('/api/book-slot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: currentRoutingData.phone,
+            department: currentRoutingData.department,
+            slot: selected
+          })
+        });
+        const respData = await res.json();
+        if (respData.success) {
+          document.getElementById('booking-slip-container').innerHTML = `
+            <div class="confirmed-slip">
+              <div class="slip-header">
+                <span style="font-weight:700; color:#166534; font-size:0.9rem;">🎫 Confirmed OPD Appointment Pass (Updated)</span>
+                <span class="slip-status">Confirmed & Logged</span>
+              </div>
+              <div class="slip-text">${escapeHtml(respData.confirmation)}</div>
+            </div>
+          `;
+        }
+      } catch (err) {
+        console.error("Failed to update slot booking", err);
+      }
     }
 
     function escapeHtml(text) {
@@ -743,12 +899,6 @@
       div.innerText = text;
       return div.innerHTML;
     }
-
-    // Initialize on load
-    window.addEventListener('DOMContentLoaded', () => {
-      fetchDatabaseStatus();
-      fetchRecords();
-    });
   </script>
 </body>
 </html>
