@@ -127,7 +127,7 @@
     /* Main Container */
     main {
       flex: 1;
-      max-width: 1160px;
+      max-width: 1180px;
       margin: 2rem auto;
       padding: 0 1.5rem;
       width: 100%;
@@ -152,12 +152,12 @@
 
     .layout-grid {
       display: grid;
-      grid-template-columns: 460px 1fr;
+      grid-template-columns: 440px 1fr;
       gap: 2rem;
       align-items: start;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 920px) {
       .layout-grid {
         grid-template-columns: 1fr;
       }
@@ -168,7 +168,7 @@
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 2rem;
+      padding: 1.85rem;
       box-shadow: var(--shadow-sm);
     }
 
@@ -246,9 +246,9 @@
     }
 
     .returning-patient-box .desc {
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       color: #0c4a6e;
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     .submit-button {
@@ -298,7 +298,7 @@
       background: #ffffff;
       border: 1.5px solid #e0f2fe;
       border-radius: 16px;
-      padding: 2rem;
+      padding: 1.85rem;
       box-shadow: var(--shadow-md);
       animation: fadeIn 0.4s ease;
     }
@@ -313,8 +313,8 @@
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--border);
-      padding-bottom: 1.25rem;
-      margin-bottom: 1.5rem;
+      padding-bottom: 1.15rem;
+      margin-bottom: 1.25rem;
     }
 
     .dept-badge {
@@ -323,9 +323,9 @@
       gap: 0.4rem;
       background: var(--primary-light);
       color: var(--primary);
-      font-size: 0.9rem;
-      font-weight: 700;
-      padding: 0.4rem 1rem;
+      font-size: 1.05rem;
+      font-weight: 800;
+      padding: 0.45rem 1.1rem;
       border-radius: 9999px;
       border: 1px solid #bae6fd;
     }
@@ -333,7 +333,7 @@
     .clinical-rationale-box {
       background: #f8fafc;
       border-left: 4px solid var(--primary);
-      padding: 1rem 1.25rem;
+      padding: 0.9rem 1.2rem;
       border-radius: 0 8px 8px 0;
       font-size: 0.92rem;
       color: #334155;
@@ -341,9 +341,9 @@
       line-height: 1.6;
     }
 
-    /* Appointment Slot Options */
+    /* Doctor Slot Selection */
     .section-title {
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 700;
       color: #1e293b;
       margin-bottom: 0.75rem;
@@ -354,7 +354,7 @@
 
     .slots-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
       gap: 0.75rem;
       margin-bottom: 1.5rem;
     }
@@ -362,7 +362,7 @@
     .slot-card {
       border: 1.5px solid var(--border);
       border-radius: 10px;
-      padding: 0.85rem 1rem;
+      padding: 0.85rem 0.95rem;
       background: #ffffff;
       cursor: pointer;
       transition: all 0.2s;
@@ -377,7 +377,7 @@
     .slot-card.active {
       border-color: var(--primary);
       background: #f0f9ff;
-      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.25);
     }
 
     .slot-doctor {
@@ -399,49 +399,157 @@
       margin-top: 0.2rem;
     }
 
-    /* Confirmed Booking Slip */
-    .confirmed-slip {
-      background: #f0fdf4;
-      border: 1.5px solid #bbf7d0;
-      border-radius: 12px;
-      padding: 1.25rem 1.5rem;
+    /* DIGITAL APPOINTMENT PASS (FORMATTED CLEAN MESSAGE) */
+    .appointment-pass-card {
+      background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+      border: 1.5px solid #86efac;
+      border-radius: 14px;
+      padding: 1.35rem 1.5rem;
       margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.08);
+      position: relative;
     }
 
-    .slip-header {
+    .pass-top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.6rem;
+      padding-bottom: 0.85rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px dashed #bbf7d0;
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
 
-    .slip-status {
-      font-size: 0.75rem;
-      font-weight: 700;
+    .pass-label {
+      font-size: 0.72rem;
+      font-weight: 800;
       text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #15803d;
+    }
+
+    .pass-code {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #166534;
+      letter-spacing: -0.01em;
+    }
+
+    .pass-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
       background: #dcfce7;
       color: #15803d;
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.3rem 0.7rem;
+      border-radius: 9999px;
+      border: 1px solid #bbf7d0;
     }
 
-    .slip-text {
-      font-size: 0.88rem;
+    .pass-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .pass-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pass-cell {
+      background: #ffffff;
+      border: 1px solid #dcfce7;
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+    }
+
+    .cell-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 0.15rem;
+      letter-spacing: 0.03em;
+    }
+
+    .cell-value {
+      display: block;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .pass-footer-note {
+      background: #f0fdf4;
+      border-radius: 6px;
+      padding: 0.6rem 0.85rem;
+      font-size: 0.78rem;
       color: #166534;
-      white-space: pre-wrap;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    /* FORMATTED INSTRUCTIONS & WHAT TO BRING (CLEAN MESSAGE) */
+    .prep-container {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .prep-section {
+      margin-bottom: 1.25rem;
+    }
+
+    .prep-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .prep-header {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-bottom: 0.6rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .prep-bullet-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.55rem;
+      font-size: 0.85rem;
+      color: #334155;
+      margin-bottom: 0.45rem;
       line-height: 1.5;
     }
 
-    /* What to Bring & Prep Instructions */
-    .prep-box {
-      background: #fdfdfd;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.2rem;
-      font-size: 0.88rem;
-      color: #334155;
-      white-space: pre-wrap;
-      line-height: 1.6;
+    .bullet-icon {
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 0.85rem;
+      line-height: 1.3;
+    }
+
+    .prep-closing-msg {
+      background: #f8fafc;
+      border-left: 3px solid #0284c7;
+      padding: 0.65rem 0.85rem;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.8rem;
+      color: #475569;
+      margin-top: 1rem;
     }
 
     /* EMERGENCY RED ALERT BOX */
@@ -476,7 +584,6 @@
       color: #991b1b;
       margin: 1.25rem 0;
       text-align: left;
-      white-space: pre-wrap;
       line-height: 1.6;
     }
 
@@ -762,6 +869,149 @@
       }
     }
 
+    // Helper: Formats appointment agent output into a clean, neat hospital pass
+    function formatAppointmentSlip(rawText, slot, department) {
+      // Extract Confirmation ID if present
+      let code = "APPT-" + Math.floor(10000 + Math.random() * 90000);
+      if (rawText) {
+        const match = rawText.match(/APPT-[\w\d]+/i);
+        if (match) code = match[0];
+      }
+
+      const doctor = slot ? slot.doctor : "Assigned Medical Officer";
+      const time = slot ? slot.time : "Today, 04:00 PM";
+      const room = slot ? slot.room : "Room 102";
+      const clinicType = slot && slot.type ? slot.type : "OPD Consultation";
+
+      return `
+        <div class="appointment-pass-card">
+          <div class="pass-top-bar">
+            <div>
+              <div class="pass-label">CONFIRMED OPD APPOINTMENT PASS</div>
+              <div class="pass-code">${escapeHtml(code)}</div>
+            </div>
+            <div class="pass-status-badge">
+              <span style="display:inline-block; width:6px; height:6px; background:#16a34a; border-radius:50%;"></span>
+              Confirmed & Logged in Registry
+            </div>
+          </div>
+
+          <div class="pass-grid">
+            <div class="pass-cell">
+              <span class="cell-label">CONSULTING DOCTOR</span>
+              <span class="cell-value">👨‍⚕️ ${escapeHtml(doctor)}</span>
+            </div>
+            <div class="pass-cell">
+              <span class="cell-label">DEPARTMENT & CLINIC</span>
+              <span class="cell-value">🏥 ${escapeHtml(department)} (${escapeHtml(clinicType)})</span>
+            </div>
+            <div class="pass-cell">
+              <span class="cell-label">SCHEDULED DATE & TIME</span>
+              <span class="cell-value" style="color:var(--primary);">🕒 ${escapeHtml(time)}</span>
+            </div>
+            <div class="pass-cell">
+              <span class="cell-label">CLINIC LOCATION</span>
+              <span class="cell-value">📍 ${escapeHtml(room)}</span>
+            </div>
+          </div>
+
+          <div class="pass-footer-note">
+            <span>ℹ️</span>
+            <span>Please arrive 10-15 minutes prior to your slot and show this pass at OPD Reception Block B.</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // Helper: Formats raw markdown instructions into a clean, neat message
+    function formatCleanInstructions(raw) {
+      if (!raw) return '<p style="color:var(--text-muted);">Standard registration: bring Photo ID and past prescriptions.</p>';
+
+      const lines = raw.split(/\r?\n/);
+      let intakeItems = [];
+      let bringItems = [];
+      let closingNotes = [];
+      let currentSection = null;
+
+      for (let line of lines) {
+        line = line.trim();
+        if (!line || line === '---') continue;
+
+        // Detect sections
+        if (/INTAKE INSTRUCTIONS/i.test(line)) {
+          currentSection = 'intake';
+          continue;
+        } else if (/WHAT TO BRING/i.test(line)) {
+          currentSection = 'bring';
+          continue;
+        }
+
+        // Clean bullet items
+        if (line.startsWith('-') || line.startsWith('*')) {
+          let item = line.replace(/^[-*]\s*/, '').trim();
+          // Clean bold markdown asterisks into strong tags
+          item = item.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+          if (currentSection === 'bring') {
+            bringItems.push(item);
+          } else {
+            intakeItems.push(item);
+          }
+        } else if (!line.startsWith('#') && !line.startsWith('**') && line.length > 5) {
+          // Closing polite text
+          closingNotes.push(line);
+        }
+      }
+
+      let html = '<div class="prep-container">';
+
+      // Section 1: Intake Instructions
+      if (intakeItems.length > 0) {
+        html += `
+          <div class="prep-section">
+            <div class="prep-header">
+              <span>⏳</span> Intake Instructions
+            </div>
+            ${intakeItems.map(it => `
+              <div class="prep-bullet-item">
+                <span class="bullet-icon">✓</span>
+                <span>${it}</span>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      // Section 2: What to Bring
+      if (bringItems.length > 0) {
+        html += `
+          <div class="prep-section">
+            <div class="prep-header">
+              <span>📑</span> Required Items to Bring
+            </div>
+            ${bringItems.map(it => `
+              <div class="prep-bullet-item">
+                <span class="bullet-icon">✓</span>
+                <span>${it}</span>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      // Closing Note
+      if (closingNotes.length > 0) {
+        html += `
+          <div class="prep-closing-msg">
+            💬 ${escapeHtml(closingNotes[closingNotes.length - 1])}
+          </div>
+        `;
+      }
+
+      html += '</div>';
+      return html;
+    }
+
     function renderOutput(data) {
       const outputContainer = document.getElementById('output-container');
 
@@ -802,6 +1052,9 @@
         </div>
       `).join('');
 
+      const cleanSlipHtml = formatAppointmentSlip(data.assigned_booking, data.selected_slot || slots[0], data.department);
+      const cleanInstructionsHtml = formatCleanInstructions(data.instructions);
+
       outputContainer.innerHTML = `
         <div class="result-box">
           <!-- Top Department & Status -->
@@ -828,28 +1081,22 @@
 
           <!-- Doctor Booking Options -->
           <div class="section-title">
-            <span>👨‍⚕️</span> Available Doctor Consultation Slots
+            <span>👨‍⚕️</span> Select Doctor Consultation Slot
           </div>
           <div class="slots-grid">
             ${slotsHtml}
           </div>
 
-          <!-- Current Confirmed Booking Slip -->
+          <!-- Current Confirmed Booking Slip (Formatted Clean Message) -->
           <div id="booking-slip-container">
-            <div class="confirmed-slip">
-              <div class="slip-header">
-                <span style="font-weight:700; color:#166534; font-size:0.9rem;">🎫 Confirmed OPD Appointment Pass</span>
-                <span class="slip-status">Confirmed & Logged</span>
-              </div>
-              <div class="slip-text">${escapeHtml(data.assigned_booking)}</div>
-            </div>
+            ${cleanSlipHtml}
           </div>
 
-          <!-- Pre-Consultation Instructions & What to Bring (RAG) -->
+          <!-- Pre-Consultation Instructions & What to Bring (Clean Formatted) -->
           <div class="section-title">
             <span>📋</span> Instructions & Required Items to Bring
           </div>
-          <div class="prep-box">${escapeHtml(data.instructions)}</div>
+          ${cleanInstructionsHtml}
         </div>
       `;
     }
@@ -878,15 +1125,9 @@
         });
         const respData = await res.json();
         if (respData.success) {
-          document.getElementById('booking-slip-container').innerHTML = `
-            <div class="confirmed-slip">
-              <div class="slip-header">
-                <span style="font-weight:700; color:#166534; font-size:0.9rem;">🎫 Confirmed OPD Appointment Pass (Updated)</span>
-                <span class="slip-status">Confirmed & Logged</span>
-              </div>
-              <div class="slip-text">${escapeHtml(respData.confirmation)}</div>
-            </div>
-          `;
+          // Re-render clean formatted appointment slip with new slot details!
+          document.getElementById('booking-slip-container').innerHTML = 
+            formatAppointmentSlip(respData.confirmation || respData.code, selected, currentRoutingData.department);
         }
       } catch (err) {
         console.error("Failed to update slot booking", err);

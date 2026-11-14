@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 from typing import Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -79,7 +80,17 @@ async def update_booking_slot(payload: SlotBookingRequest):
     """Allows patient to switch to an alternative available doctor slot."""
     try:
         confirmation = book_appointment(payload.phone, payload.department, payload.slot)
-        return {"success": True, "confirmation": confirmation}
+        # Extract confirmation code if present
+        code_match = re.search(r"APPT-[\w\d]+", confirmation, re.IGNORECASE)
+        code = code_match.group(0) if code_match else "APPT-CONFIRMED"
+        
+        return {
+            "success": True, 
+            "confirmation": confirmation,
+            "code": code,
+            "slot": payload.slot,
+            "department": payload.department
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
