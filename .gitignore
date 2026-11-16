@@ -19,3 +19,16 @@ env/
 # Environment
 .env
 .env.local
+
+# IDEs & OS
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+
+# Uploaded documents
+*.pdf

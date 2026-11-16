@@ -4,6 +4,7 @@ import re
 from typing import Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import uvicorn
 
@@ -17,6 +18,11 @@ from appointment_agent import book_appointment
 from sqlconnections import get_patient_last_visit
 
 app = FastAPI(title="LifeCare Hospital Patient Routing AI")
+app.mount(
+    "/static",
+    StaticFiles(directory=os.path.join(BASE_DIR, "static")),
+    name="static",
+)
 
 class PatientRequest(BaseModel):
     name: str

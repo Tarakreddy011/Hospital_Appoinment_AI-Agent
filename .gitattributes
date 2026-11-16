@@ -1,0 +1,4 @@
+# GitHub Linguist language statistics configuration
+# Vendor client static assets to prioritize Python in repository language statistics
+static/** linguist-vendored=true
+*.pdf binary
