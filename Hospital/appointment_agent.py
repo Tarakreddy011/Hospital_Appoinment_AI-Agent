@@ -6,6 +6,7 @@ try:
 except ImportError:
     from Hospital.sqlconnections import update_patient_department
 
+# TODO
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "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")
 client = Groq(api_key=GROQ_API_KEY)
 

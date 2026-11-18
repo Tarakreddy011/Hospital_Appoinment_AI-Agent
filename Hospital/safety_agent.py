@@ -1,6 +1,6 @@
 import os
 from groq import Groq
-
+# TODO
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "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")
 client = Groq(api_key=GROQ_API_KEY)
 
@@ -53,7 +53,7 @@ def is_emergency(safety_response: str) -> bool:
             return "true" in line
     return "urgent: true" in lower or ("urgent" in lower and "true" in lower)
 
-
+# testing purpose
 if __name__ == "__main__":
     print("--- Test 1 (Emergency) ---")
     res1 = check_safety("I am having severe crushing chest pain and shortness of breath.")

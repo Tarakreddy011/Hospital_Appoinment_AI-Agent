@@ -1,7 +1,7 @@
 import os
 import sys
 import re
-
+# ALL OK
 if sys.platform == "win32":
     try:
         if hasattr(sys.stdout, "reconfigure"):

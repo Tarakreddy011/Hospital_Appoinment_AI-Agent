@@ -6,6 +6,8 @@ try:
 except ImportError:
     from Hospital.sqlconnections import get_patient_last_visit, insert_patient_record
 
+
+#TODO
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "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")
 client = Groq(api_key=GROQ_API_KEY)
 
@@ -27,7 +29,7 @@ def run_intake_agent(name: str, phone: str, current_concern: str) -> str:
     else:
         history_context = "No previous records found. New patient."
     
-    # 2. LLM Reasoning/Agent Prompt
+    # 2. LLM Reasoning/Agent Promp
     prompt = f"""
     You are an intelligent Hospital Intake Agent. Your job is to process patient check-in details and historical memory to create a clean intake summary.
     
