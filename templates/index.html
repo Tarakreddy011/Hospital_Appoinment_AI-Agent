@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hospital Patient Triage & Appointment System</title>
+  <title>LifeCare Hospital — Intelligent Clinical Triage & Department Routing AI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,39 +11,57 @@
 </head>
 <body>
 
-  <!-- HOSPITAL HEADER -->
+  <!-- FLASH EMERGENCY HELPLINE BANNER (DYNAMIC TOP NOTIFICATION) -->
+  <div id="flash-emergency-banner" class="flash-emergency-top" style="display: none;">
+    <div class="flash-banner-inner">
+      <div class="flash-left">
+        <span class="flash-siren">🚨</span>
+        <div>
+          <strong id="flash-title">CRITICAL CLINICAL ALERT</strong>
+          <span id="flash-desc" class="flash-desc">High-risk red flag symptoms detected. Immediate emergency escalation recommended.</span>
+        </div>
+      </div>
+      <div class="flash-right">
+        <a href="tel:112" class="flash-call-pill">
+          📞 Call 112 / 108 Emergency
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOSPITAL BRAND HEADER -->
   <header>
     <div class="header-inner">
       <div class="hospital-brand">
         <div class="brand-cross">+</div>
         <div>
           <div class="hospital-title">LifeCare Multi-Speciality Hospital</div>
-          <div class="hospital-subtitle">Outpatient Department (OPD) Intelligent Triage Desk</div>
+          <div class="hospital-subtitle">Intelligent Outpatient Triage & Clinical Routing System</div>
         </div>
       </div>
       <div class="emergency-badge">
         <span class="pulse-dot"></span>
-        <span>24/7 Emergency: <b>112 / 108</b></span>
+        <span>24/7 Central Emergency: <b>112 / 108</b></span>
       </div>
     </div>
   </header>
 
   <main>
     <div class="hero-banner">
-      <h1>Patient Intake & Clinical Department Routing</h1>
-      <p>Enter your symptoms to receive an automated safety screening, clinical specialty routing, and appointment scheduling.</p>
+      <h1>AI Patient Intake & Multi-Speciality Clinical Routing</h1>
+      <p>Enter patient vitals and symptoms for real-time safety screening, multi-system syndrome analysis, and automated doctor scheduling.</p>
     </div>
 
     <div class="layout-grid">
-      <!-- LEFT FORM -->
+      <!-- LEFT: REGISTRATION & VITALS FORM -->
       <div class="white-card">
         <div class="card-heading">
-          <span>📋</span> Patient Registration
+          <span>📋</span> Patient Registration & Clinical Vitals
         </div>
-        <div class="card-subheading">Fill in details for clinical triage assessment</div>
+        <div class="card-subheading">Fill in demographics, physical vitals, and presenting symptoms</div>
 
-        <!-- CLEAN RETURNING PATIENT BANNER -->
-        <div id="returning-banner" class="returning-patient-box">
+        <!-- RETURNING PATIENT MEMORY BANNER -->
+        <div id="returning-banner" class="returning-patient-box" style="display: none;">
           <div class="title">
             <span>👋</span> <span id="returning-welcome">Welcome back!</span>
           </div>
@@ -55,8 +73,9 @@
         </div>
 
         <form id="triage-form" onsubmit="handleTriageSubmit(event)">
+          <!-- PHONE -->
           <div class="form-group">
-            <label for="patient-phone">Phone Number <span style="color:var(--primary);">*</span></label>
+            <label for="patient-phone">Phone Number <span class="required">*</span></label>
             <input 
               type="tel" 
               id="patient-phone" 
@@ -64,40 +83,79 @@
               placeholder="e.g. 9876543210" 
               onblur="checkPatientHistory()"
             >
-            <small style="color:var(--text-muted); font-size:0.75rem; margin-top:0.25rem; display:block;">
-              Used to retrieve prior visit memory from the hospital database.
-            </small>
+            <small class="field-hint">Used to recall prior visits from the hospital database memory.</small>
           </div>
 
+          <!-- FULL NAME -->
           <div class="form-group">
-            <label for="patient-name">Patient Full Name <span style="color:var(--primary);">*</span></label>
+            <label for="patient-name">Patient Full Name <span class="required">*</span></label>
             <input type="text" id="patient-name" required placeholder="e.g. Rahul Sharma">
           </div>
 
+          <!-- VITALS GRID: AGE, SEX, WEIGHT, HEIGHT -->
+          <div class="vitals-row-grid">
+            <div class="form-group">
+              <label for="patient-age">Age (yrs) <span class="required">*</span></label>
+              <input type="number" id="patient-age" required min="1" max="120" placeholder="e.g. 42">
+            </div>
+
+            <div class="form-group">
+              <label for="patient-sex">Sex <span class="required">*</span></label>
+              <select id="patient-sex" required>
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="patient-weight">Weight (kg)</label>
+              <input type="number" id="patient-weight" step="0.5" min="2" max="300" placeholder="70" oninput="calculateBMIPreview()">
+            </div>
+
+            <div class="form-group">
+              <label for="patient-height">Height (cm)</label>
+              <input type="number" id="patient-height" step="1" min="40" max="250" placeholder="172" oninput="calculateBMIPreview()">
+            </div>
+          </div>
+
+          <!-- LIVE BMI CHIP -->
+          <div id="bmi-preview-container" style="display: none; margin-bottom: 1.15rem;">
+            <div class="bmi-badge">
+              <span>⚖️ Calculated BMI:</span>
+              <strong id="bmi-value">--</strong>
+              <span id="bmi-category" class="bmi-pill">Normal</span>
+            </div>
+          </div>
+
+          <!-- SYMPTOMS TEXTAREA -->
           <div class="form-group">
-            <label for="patient-concern">Describe Your Symptoms / Medical Concern <span style="color:var(--primary);">*</span></label>
+            <label for="patient-concern">Presenting Symptoms / Clinical Concern <span class="required">*</span></label>
             <textarea 
               id="patient-concern" 
               required 
-              placeholder="Please describe what you are experiencing (e.g. location of pain, duration, severity, stiffness)..."
+              rows="4"
+              placeholder="Describe all symptoms in detail (e.g., blurry vision, breathing problem, tachycardia, disorientation, knee stiffness, duration, onset)..."
             ></textarea>
+            <small class="field-hint">Note: If multiple symptoms are present, mention all of them for accurate multi-system triage.</small>
           </div>
 
           <button type="submit" id="submit-btn" class="submit-button">
-            <span id="btn-text">Submit for Clinical Routing</span>
+            <span id="btn-text">Submit for AI Clinical Triage</span>
             <span id="btn-spinner" class="spinner" style="display: none;"></span>
           </button>
         </form>
       </div>
 
-      <!-- RIGHT RESULTS BOX -->
+      <!-- RIGHT: RESULTS / TRIAGE TICKET -->
       <div id="output-container">
-        <div class="white-card" style="min-height: 440px; display:flex; align-items:center; justify-content:center;">
+        <div class="white-card" style="min-height: 480px; display:flex; align-items:center; justify-content:center;">
           <div class="empty-output-state">
             <div class="empty-output-icon">🩺</div>
-            <h3 style="font-size:1.15rem; color:#334155;">Ready for Patient Check-In</h3>
-            <p style="font-size:0.88rem; max-width:320px; margin:0.4rem auto 0 auto;">
-              Enter your contact number and symptoms on the left to initiate safety evaluation and department routing.
+            <h3 style="font-size:1.15rem; color:#334155;">Ready for Clinical Evaluation</h3>
+            <p style="font-size:0.88rem; max-width:340px; margin:0.4rem auto 0 auto; color:#64748b;">
+              Fill in patient demographics, vitals, and symptoms on the left to initiate safety screening, RAG guideline retrieval, and specialty doctor booking.
             </p>
           </div>
         </div>
@@ -117,8 +175,8 @@
         <span>National Emergency: <a href="tel:112">112</a></span>
       </div>
     </div>
-    <div style="max-width: 1200px; margin: 1.25rem auto 0 auto; padding-top: 1rem; border-top: 1px solid #f1f5f9; font-size: 0.75rem; color: #94a3b8; text-align: center;">
-      LifeCare Clinical Decision Support & Routing AI • Designed for hospital outpatient triage optimization.
+    <div class="footer-bottom">
+      LifeCare Clinical Decision Support & Routing AI • Multi-Agent Healthcare Architecture (Safety • Intake • Triage • RAG Info • Scheduling).
     </div>
   </footer>
 

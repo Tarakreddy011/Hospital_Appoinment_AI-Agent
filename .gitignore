@@ -3,32 +3,29 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.so
-.Python
 
-# Virtual Environment
+# Virtual environments
 .venv/
 venv/
 ENV/
-env/
 
-# Database files
+# Database
 *.db
-*.sqlite
-*.sqlite3
 
-# Environment
-.env
-.env.local
-
-# IDEs & OS
+# IDE
 .idea/
 .vscode/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-.DS_Store
+*.swp
+*.swo
 
-# Uploaded documents
-*.pdf
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+*.egg-info/
+dist/
+build/
+
+# Scratch / temp
+scratch/

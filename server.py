@@ -13,9 +13,19 @@ HOSPITAL_DIR = os.path.join(BASE_DIR, "Hospital")
 if HOSPITAL_DIR not in sys.path:
     sys.path.insert(0, HOSPITAL_DIR)
 
+if not os.getenv("GROQ_API_KEY"):
+    print(
+        "[Notice] GROQ_API_KEY is not configured in environment.\n"
+        "         Hospital Routing AI is running in Resilient Hybrid Mode\n"
+        "         (Clinical Rule & Keyword Triage Engine active).\n"
+        "         To enable Groq LLM reasoning, set: $env:GROQ_API_KEY = 'your-key'\n"
+    )
+else:
+    print("✅ Groq LLM API Key detected. Cloud agent reasoning active.")
+
 from main import run_hospital_system
 from appointment_agent import book_appointment
-from sqlconnections import get_patient_last_visit
+from sqlconnections import get_patient_last_visit, get_all_patient_records
 
 app = FastAPI(title="LifeCare Hospital Patient Routing AI")
 app.mount(
@@ -24,11 +34,17 @@ app.mount(
     name="static",
 )
 
+
 class PatientRequest(BaseModel):
     name: str
     phone: str
     patient_concern: str
+    age: Optional[int] = None
+    sex: Optional[str] = None
+    weight: Optional[float] = None
+    height: Optional[float] = None
     chosen_slot: Optional[dict] = None
+
 
 class SlotBookingRequest(BaseModel):
     phone: str
@@ -57,6 +73,11 @@ async def check_patient(phone: str):
             return {
                 "found": True,
                 "name": record.get("name", ""),
+                "age": record.get("age"),
+                "sex": record.get("sex"),
+                "weight": record.get("weight"),
+                "height": record.get("height"),
+                "bmi": record.get("bmi"),
                 "last_visit": str(record.get("visit_date", "N/A")),
                 "last_concern": record.get("last_concern", ""),
                 "last_department": record.get("routed_department", "")
@@ -74,6 +95,10 @@ async def route_patient_api(payload: PatientRequest):
             name=payload.name.strip(),
             phone=payload.phone.strip(),
             patient_concern=payload.patient_concern.strip(),
+            age=payload.age,
+            sex=payload.sex,
+            weight=payload.weight,
+            height=payload.height,
             chosen_slot=payload.chosen_slot
         )
         return JSONResponse(content=result)
@@ -86,17 +111,26 @@ async def update_booking_slot(payload: SlotBookingRequest):
     """Allows patient to switch to an alternative available doctor slot."""
     try:
         confirmation = book_appointment(payload.phone, payload.department, payload.slot)
-        # Extract confirmation code if present
         code_match = re.search(r"APPT-[\w\d]+", confirmation, re.IGNORECASE)
         code = code_match.group(0) if code_match else "APPT-CONFIRMED"
-        
+
         return {
-            "success": True, 
+            "success": True,
             "confirmation": confirmation,
             "code": code,
             "slot": payload.slot,
             "department": payload.department
         }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/records")
+async def view_records(limit: int = 25):
+    """Returns recent hospital registry records."""
+    try:
+        records = get_all_patient_records(limit=limit)
+        return {"success": True, "records": records}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
